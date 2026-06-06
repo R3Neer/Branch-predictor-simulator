@@ -14,6 +14,7 @@ import {
 import type { OfficialTemplate, OfficialTemplateVariant } from "../../infrastructure/templates/OfficialTemplate";
 import { officialTemplates } from "../../infrastructure/templates/officialTemplates";
 import { CsvTableExporter, MarkdownTableExporter } from "../../infrastructure/export/TableExporters";
+import { SessionYamlMapper } from "../../infrastructure/persistence/SessionYamlMapper";
 
 export type TableExportFormat = "csv" | "markdown";
 
@@ -29,6 +30,7 @@ interface SimulationStoreState {
   readonly trace: readonly TraceStep[];
   readonly tableView: DynamicTableView;
   readonly exportedTable?: string;
+  readonly exportedSessionYaml?: string;
   readonly statistics?: StatisticsSet;
   readonly selectTemplate: (templateId: string) => void;
   readonly updateCSource: (source: string) => void;
@@ -38,11 +40,13 @@ interface SimulationStoreState {
   readonly reset: () => void;
   readonly calculateStats: () => void;
   readonly exportTable: (format: TableExportFormat) => void;
+  readonly exportSessionYaml: () => void;
 }
 
 const tableProjector = new TableProjector();
 const predictorFactory = new PredictorFactory();
 const cTranslator = new CTranslator();
+const sessionYamlMapper = new SessionYamlMapper();
 const tableExporters: Record<TableExportFormat, { export: (tableView: DynamicTableView) => string }> = {
   csv: new CsvTableExporter(),
   markdown: new MarkdownTableExporter()
@@ -77,6 +81,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       trace: [],
       statistics: undefined,
       exportedTable: undefined,
+      exportedSessionYaml: undefined,
       tableView: project([], get().mode)
     });
   },
@@ -85,7 +90,8 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
     set({
       cSource: source,
       riscVSource: translation.riscVSource,
-      translationDiagnostics: translation.diagnostics
+      translationDiagnostics: translation.diagnostics,
+      exportedSessionYaml: undefined
     });
   },
   setMode: (mode) => {
@@ -99,6 +105,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       trace,
       statistics: undefined,
       exportedTable: undefined,
+      exportedSessionYaml: undefined,
       tableView: project(trace, get().mode)
     });
   },
@@ -110,6 +117,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       trace,
       statistics: undefined,
       exportedTable: undefined,
+      exportedSessionYaml: undefined,
       tableView: project(trace, get().mode)
     });
   },
@@ -119,6 +127,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       trace: [],
       statistics: undefined,
       exportedTable: undefined,
+      exportedSessionYaml: undefined,
       tableView: project([], get().mode)
     });
   },
@@ -137,6 +146,25 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
   },
   exportTable: (format) => {
     set({ exportedTable: tableExporters[format].export(get().tableView) });
+  },
+  exportSessionYaml: () => {
+    const state = get();
+    const { template, variant } = getSelected(state);
+    set({
+      exportedSessionYaml: sessionYamlMapper.toYaml({
+        version: 1,
+        title: template.title,
+        language: "es",
+        mode: state.mode,
+        predictorConfig: variant.predictorConfig,
+        source: {
+          cSource: state.cSource,
+          riscVSource: state.riscVSource,
+          syncState: "synced"
+        },
+        branchSequence: template.branchSequence
+      })
+    });
   }
 }));
 

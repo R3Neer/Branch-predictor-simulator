@@ -57,4 +57,20 @@ describe("DashboardShell", () => {
     expect(exportArea.value).toContain("| Iteracion | Salto |");
     expect(exportArea.value).toContain("| 1 | B1 |");
   });
+
+  it("exports the current editable input as YAML without derived statistics", () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Paso" }));
+    fireEvent.click(screen.getByRole("button", { name: "Calcular" }));
+    fireEvent.click(screen.getByRole("button", { name: "YAML" }));
+
+    const yamlArea = screen.getByLabelText("Sesion YAML") as HTMLTextAreaElement;
+    expect(yamlArea.value).toContain("version: 1");
+    expect(yamlArea.value).toContain("cSource:");
+    expect(yamlArea.value).toContain("riscVSource:");
+    expect(yamlArea.value).toContain("branchSequence:");
+    expect(yamlArea.value).not.toContain("statistics:");
+    expect(yamlArea.value).not.toContain("tableView:");
+  });
 });

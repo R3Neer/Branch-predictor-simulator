@@ -33,6 +33,7 @@ export function DashboardShell() {
     currentStep,
     tableView,
     exportedTable,
+    exportedSessionYaml,
     statistics,
     selectTemplate,
     updateCSource,
@@ -41,7 +42,8 @@ export function DashboardShell() {
     runAll,
     reset,
     calculateStats,
-    exportTable
+    exportTable,
+    exportSessionYaml
   } = useSimulationStore();
   const selectedTemplate = templates.find((template) => template.id === selectedTemplateId) ?? templates[0];
   const selectedVariant = selectedTemplate.variants[0];
@@ -111,6 +113,9 @@ export function DashboardShell() {
               <Button startIcon={<DownloadIcon />} variant="outlined" onClick={() => exportTable("markdown")}>
                 Markdown
               </Button>
+              <Button startIcon={<DownloadIcon />} variant="outlined" onClick={exportSessionYaml}>
+                YAML
+              </Button>
               <Typography sx={{ ml: "auto" }} variant="body2">
                 Paso {currentStep} / {selectedTemplate.branchSequence.executions.length}
               </Typography>
@@ -164,6 +169,18 @@ export function DashboardShell() {
               multiline
               minRows={4}
               value={exportedTable}
+              InputProps={{
+                readOnly: true,
+                sx: { fontFamily: '"Roboto Mono", Consolas, monospace', fontSize: "0.8125rem" }
+              }}
+            />
+          ) : undefined}
+          {exportedSessionYaml ? (
+            <TextField
+              label="Sesion YAML"
+              multiline
+              minRows={6}
+              value={exportedSessionYaml}
               InputProps={{
                 readOnly: true,
                 sx: { fontFamily: '"Roboto Mono", Consolas, monospace', fontSize: "0.8125rem" }
