@@ -8,12 +8,13 @@ The simulator will allow users to work from didactic C, RISC-V assembly, or a ma
 
 The current reference documents are:
 
-- `REQUISITOS.md`: functional scope and v1 requirements.
-- `ARQUITECTURA.md`: domain model, use cases, architecture and design patterns.
-- `Documentos externos/Problemas.pdf`: official branch predictor exercises and solutions.
-- Theory PDF in `Documentos externos/`: reference material for RISC-V and branch prediction.
+- `docs/REQUISITOS.md`: functional scope and v1 requirements.
+- `docs/ARQUITECTURA.md`: domain model, use cases, architecture and design patterns.
+- `docs/POLITICA_QA.md`: testing and QA policy.
+- `ref_docs/Problemas.pdf`: official branch predictor exercises and solutions.
+- `ref_docs/Teoría.pdf`: reference material for RISC-V and branch prediction.
 
-`REQUISITOS.md` and `ARQUITECTURA.md` are the main source of truth for implementation decisions.
+`docs/REQUISITOS.md` and `docs/ARQUITECTURA.md` are the main source of truth for implementation decisions.
 
 ## Planned Stack
 
@@ -30,7 +31,7 @@ The current reference documents are:
 - Vitest
 - Playwright
 
-Technical rationale and Codex agent roles are documented in `DECISIONES_TECNICAS_Y_AGENTES.md` and `.codex/AGENTES.md`.
+Technical rationale and Codex agent roles are documented in `docs/DECISIONES_TECNICAS_Y_AGENTES.md` and `.codex/AGENTES.md`.
 
 ## V1 Scope
 
@@ -76,7 +77,7 @@ src/
 +-- presentation/
 public/
 +-- templates/
-Documentos externos/
+ref_docs/
 ```
 
 The simulation domain must stay independent from React, Material UI, browser storage and YAML formatting.

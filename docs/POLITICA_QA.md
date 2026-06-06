@@ -2,16 +2,16 @@
 
 Este documento forma parte del diseno del simulador. Su objetivo es fijar como se prueban las piezas conforme se implementan, que agentes participan y que condiciones deben cumplirse antes de aceptar cada bloque de trabajo.
 
-La politica aplica a todo codigo de v1 descrito en `REQUISITOS.md`, `ARQUITECTURA.md` y `DECISIONES_TECNICAS_Y_AGENTES.md`.
+La politica aplica a todo codigo de v1 descrito en `docs/REQUISITOS.md`, `docs/ARQUITECTURA.md` y `docs/DECISIONES_TECNICAS_Y_AGENTES.md`.
 
 ## 0. Autoridad y cambios del documento
 
 Jerarquia documental:
 
-1. `REQUISITOS.md` manda sobre todo y no se modifica salvo instruccion explicita del usuario.
-2. `ARQUITECTURA.md` define la arquitectura y requiere confirmacion explicita del usuario para cambiar.
+1. `docs/REQUISITOS.md` manda sobre todo y no se modifica salvo instruccion explicita del usuario.
+2. `docs/ARQUITECTURA.md` define la arquitectura y requiere confirmacion explicita del usuario para cambiar.
 3. `docs/POLITICA_QA.md` define testing y QA y requiere confirmacion explicita del usuario para cambiar.
-4. `DECISIONES_TECNICAS_Y_AGENTES.md` y `.codex/AGENTES.md` deben derivar de los tres documentos anteriores.
+4. `docs/DECISIONES_TECNICAS_Y_AGENTES.md` y `.codex/AGENTES.md` deben derivar de los tres documentos anteriores.
 5. Codigo, README y scaffold obedecen a todos los documentos superiores.
 
 Este documento no puede ser editado por workers. Solo el jefe puede modificarlo, y solo despues de confirmacion textual del usuario.
@@ -188,7 +188,7 @@ Si una prueba falla porque el comportamiento esperado ya no encaja con el diseno
 
 1. Explicar el cambio necesario.
 2. Actualizar el documento de diseno correspondiente.
-3. Revisar que el cambio cuadra con `REQUISITOS.md`, `ARQUITECTURA.md`, `DECISIONES_TECNICAS_Y_AGENTES.md` y este documento.
+3. Revisar que el cambio cuadra con `docs/REQUISITOS.md`, `docs/ARQUITECTURA.md`, `docs/DECISIONES_TECNICAS_Y_AGENTES.md` y este documento.
 4. Actualizar implementacion y tests.
 5. Ejecutar la suite relevante.
 

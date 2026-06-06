@@ -1,6 +1,6 @@
 # Decisiones tecnicas y agentes Codex
 
-Este documento fija la pila tecnologica inicial y el modelo de trabajo con agentes para implementar el simulador de branch predictors descrito en `REQUISITOS.md` y `ARQUITECTURA.md`.
+Este documento fija la pila tecnologica inicial y el modelo de trabajo con agentes para implementar el simulador de branch predictors descrito en `docs/REQUISITOS.md` y `docs/ARQUITECTURA.md`.
 
 ## 1. Decision ejecutiva
 
@@ -44,16 +44,16 @@ La politica detallada de pruebas y QA queda fijada en `docs/POLITICA_QA.md`. Ese
 
 La implementacion y los agentes obedecen esta jerarquia:
 
-1. `REQUISITOS.md`: fuente de verdad maxima. No se modifica salvo instruccion explicita del usuario.
-2. `ARQUITECTURA.md`: arquitectura de referencia. Cualquier cambio requiere confirmacion explicita del usuario.
+1. `docs/REQUISITOS.md`: fuente de verdad maxima. No se modifica salvo instruccion explicita del usuario.
+2. `docs/ARQUITECTURA.md`: arquitectura de referencia. Cualquier cambio requiere confirmacion explicita del usuario.
 3. `docs/POLITICA_QA.md`: politica de testing y QA. Cualquier cambio requiere confirmacion explicita del usuario.
-4. `DECISIONES_TECNICAS_Y_AGENTES.md` y `.codex/AGENTES.md`: decisiones operativas que deben derivar de los documentos anteriores.
+4. `docs/DECISIONES_TECNICAS_Y_AGENTES.md` y `.codex/AGENTES.md`: decisiones operativas que deben derivar de los documentos anteriores.
 5. `README.md`, scaffold y codigo: deben obedecer a todos los documentos superiores.
 
 Reglas de gobierno:
 
 - La mayoria de agentes tiene prohibido editar documentos de diseno y gobernanza.
-- Los workers no pueden tocar `REQUISITOS.md`, `ARQUITECTURA.md`, `docs/POLITICA_QA.md`, `DECISIONES_TECNICAS_Y_AGENTES.md` ni `.codex/AGENTES.md`.
+- Los workers no pueden tocar `docs/REQUISITOS.md`, `docs/ARQUITECTURA.md`, `docs/POLITICA_QA.md`, `docs/DECISIONES_TECNICAS_Y_AGENTES.md` ni `.codex/AGENTES.md`.
 - Los explorers no modifican archivos salvo encargo explicito.
 - Si una tarea contradice requisitos, se detiene y se pregunta al usuario.
 - Si una tarea requiere cambiar arquitectura o politica QA, se pide confirmacion textual antes de editar.
@@ -133,7 +133,7 @@ Usaremos agentes de Codex solo para tareas separables. El programador jefe manti
 | QA Visual Material | `explorer` o `worker` | Revisar coherencia MUI, densidad de tablas, responsive, contraste, i18n visual y capturas Playwright. | Antes de cerrar hitos de UI o cambios visuales relevantes. |
 | UI Material | `worker` | Implementar pantallas, tablas, editores y estados visuales. | Cuando el dominio exponga casos de uso estables. |
 | Persistencia | `worker` | YAML, validacion Zod, repositorios de sesion y borrador. | En paralelo al motor, con contratos cerrados. |
-| Plantillas oficiales | `worker` | Extraer y versionar ejercicios 1, 2, 3, 4, 5 y 7 desde `Documentos externos/Problemas.pdf`. | Cuando el esquema de plantilla este definido. |
+| Plantillas oficiales | `worker` | Extraer y versionar ejercicios 1, 2, 3, 4, 5 y 7 desde `ref_docs/Problemas.pdf`. | Cuando el esquema de plantilla este definido. |
 | QA unitario | `worker` | Crear y mantener tests Vitest de clases, funciones puras, predictores, parsers, reglas y calculadoras. | Al terminar cada clase o unidad funcional. |
 | QA integracion | `worker` | Crear y mantener tests de casos de uso, puertos fake, repositorios, validacion de plantillas y formatos. | Al terminar cada caso de uso o adaptador. |
 | QA e2e | `worker` | Crear y mantener tests Playwright de flujos locales completos y capturas cuando haya UI. | Al cerrar flujos de usuario o hitos de UI. |
@@ -174,7 +174,7 @@ no reviertas cambios ajenos y adapta tu trabajo a lo existente.
 
 Responsabilidad: [modulo o archivos concretos].
 Objetivo: [resultado verificable].
-Restricciones: sigue ARQUITECTURA.md y docs/POLITICA_QA.md, usa TypeScript estricto y no metas logica de dominio en React.
+Restricciones: sigue docs/ARQUITECTURA.md y docs/POLITICA_QA.md, usa TypeScript estricto y no metas logica de dominio en React.
 No edites documentos de diseno o gobernanza salvo encargo explicito del jefe tras confirmacion del usuario.
 Entrega: modifica archivos directamente y termina indicando rutas cambiadas y pruebas ejecutadas.
 ```
@@ -192,7 +192,7 @@ No modifiques archivos. Devuelve hallazgos priorizados, riesgos y referencias a 
 2. Explorer Guardian documental: validar que el primer hito respeta requisitos, arquitectura y politica QA sin modificar archivos.
 3. Worker Motor: implementar contadores saturantes, outcomes, branch sequence, predictor de un nivel y tests.
 4. Worker Persistencia: definir esquemas Zod para sesion, predictor config y repositorios YAML.
-5. Worker Plantillas oficiales: convertir ejercicios 1, 2, 3, 4, 5 y 7 de `Documentos externos/Problemas.pdf` a datos versionados.
+5. Worker Plantillas oficiales: convertir ejercicios 1, 2, 3, 4, 5 y 7 de `ref_docs/Problemas.pdf` a datos versionados.
 6. Explorer Diseno UX academico: revisar layout Material, densidad academica, accesibilidad basica y comportamiento esperado de editores/tabla antes de implementar pantalla.
 7. Worker UI: montar layout Material con editores, configurador y tabla vacia conectada a store.
 8. Worker QA unitario/integracion: completar tests faltantes del bloque si no quedaron incluidos por los workers de implementacion.

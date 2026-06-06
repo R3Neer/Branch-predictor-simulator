@@ -12,7 +12,7 @@ Este archivo sirve como chuleta para lanzar subagentes en Codex cuando el trabaj
 | QA Visual Material | `explorer` o `worker` | coherencia MUI, densidad de tablas, responsive, contraste, i18n visual y capturas Playwright |
 | UI Material | `worker` | `src/presentation/**` |
 | Persistencia | `worker` | `src/infrastructure/persistence/**`, repositorios YAML y borrador |
-| Plantillas oficiales | `worker` | `src/infrastructure/templates/**`, `public/templates/**`, datos derivados de `Documentos externos/Problemas.pdf` |
+| Plantillas oficiales | `worker` | `src/infrastructure/templates/**`, `public/templates/**`, datos derivados de `ref_docs/Problemas.pdf` |
 | QA unitario | `worker` | tests Vitest junto a clases, funciones puras, predictores, parsers y calculadoras |
 | QA integracion | `worker` | tests de casos de uso, repositorios fake, YAML, plantillas y exportadores |
 | QA e2e | `worker` | flujos Playwright y capturas cuando exista UI ejecutable |
@@ -24,15 +24,15 @@ Este archivo sirve como chuleta para lanzar subagentes en Codex cuando el trabaj
 
 Jerarquia obligatoria:
 
-1. `REQUISITOS.md`: fuente de verdad maxima. Intocable salvo instruccion explicita del usuario.
-2. `ARQUITECTURA.md`: diseno tecnico de referencia. Solo puede cambiar con confirmacion explicita del usuario.
+1. `docs/REQUISITOS.md`: fuente de verdad maxima. Intocable salvo instruccion explicita del usuario.
+2. `docs/ARQUITECTURA.md`: diseno tecnico de referencia. Solo puede cambiar con confirmacion explicita del usuario.
 3. `docs/POLITICA_QA.md`: politica de testing/QA. Solo puede cambiar con confirmacion explicita del usuario.
-4. `DECISIONES_TECNICAS_Y_AGENTES.md` y `.codex/AGENTES.md`: decisiones operativas. Deben beber de los tres documentos anteriores.
+4. `docs/DECISIONES_TECNICAS_Y_AGENTES.md` y `.codex/AGENTES.md`: decisiones operativas. Deben beber de los tres documentos anteriores.
 5. `README.md`, scaffold y codigo: deben ajustarse a todo lo anterior.
 
 Reglas:
 
-- Los workers no pueden editar documentos de diseno: `REQUISITOS.md`, `ARQUITECTURA.md`, `docs/POLITICA_QA.md` ni `DECISIONES_TECNICAS_Y_AGENTES.md`.
+- Los workers no pueden editar documentos de diseno: `docs/REQUISITOS.md`, `docs/ARQUITECTURA.md`, `docs/POLITICA_QA.md` ni `docs/DECISIONES_TECNICAS_Y_AGENTES.md`.
 - Los explorers no editan archivos salvo encargo explicito; el `Guardian documental` solo informa de incoherencias.
 - Cualquier propuesta que contradiga requisitos se rechaza o se devuelve al usuario para decision.
 - Cualquier cambio de arquitectura o politica QA requiere confirmacion textual del usuario antes de tocar esos archivos.
@@ -48,8 +48,8 @@ No estas solo en el codebase: no reviertas cambios ajenos y adapta tu trabajo a 
 Responsabilidad: [archivos o modulo].
 Objetivo: [resultado verificable].
 Restricciones:
-- No edites documentos de diseno ni gobernanza: REQUISITOS.md, ARQUITECTURA.md, docs/POLITICA_QA.md, DECISIONES_TECNICAS_Y_AGENTES.md ni .codex/AGENTES.md, salvo encargo explicito del jefe tras confirmacion del usuario.
-- Sigue ARQUITECTURA.md y DECISIONES_TECNICAS_Y_AGENTES.md.
+- No edites documentos de diseno ni gobernanza: docs/REQUISITOS.md, docs/ARQUITECTURA.md, docs/POLITICA_QA.md, docs/DECISIONES_TECNICAS_Y_AGENTES.md ni .codex/AGENTES.md, salvo encargo explicito del jefe tras confirmacion del usuario.
+- Sigue docs/ARQUITECTURA.md y docs/DECISIONES_TECNICAS_Y_AGENTES.md.
 - Sigue docs/POLITICA_QA.md.
 - Usa TypeScript estricto.
 - No metas logica de dominio en React.
@@ -78,10 +78,10 @@ Devuelve hallazgos priorizados, riesgos y referencias a documentos o codigo.
 Eres el Guardian documental de Codex.
 No modifiques archivos.
 Comprueba coherencia con esta jerarquia:
-1. REQUISITOS.md manda sobre todo y es intocable sin orden explicita del usuario.
-2. ARQUITECTURA.md requiere confirmacion explicita del usuario para cambiar.
+1. docs/REQUISITOS.md manda sobre todo y es intocable sin orden explicita del usuario.
+2. docs/ARQUITECTURA.md requiere confirmacion explicita del usuario para cambiar.
 3. docs/POLITICA_QA.md requiere confirmacion explicita del usuario para cambiar.
-4. DECISIONES_TECNICAS_Y_AGENTES.md y .codex/AGENTES.md deben derivar de lo anterior.
+4. docs/DECISIONES_TECNICAS_Y_AGENTES.md y .codex/AGENTES.md deben derivar de lo anterior.
 5. Codigo, README y scaffold deben obedecer a todos los documentos superiores.
 
 Devuelve:
