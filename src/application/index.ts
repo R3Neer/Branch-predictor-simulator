@@ -43,3 +43,10 @@ export { RiscVParser } from "../domain/source/RiscVParser";
 export type { Branch, Instruction, RiscVProgram } from "../domain/source/RiscVProgram";
 export { SourceSyncPolicy } from "../domain/source/SourceBundle";
 export type { SourceBundle, SourceSyncState } from "../domain/source/SourceBundle";
+export { officialTemplates } from "../infrastructure/templates/officialTemplates";
+export { TemplateValidator } from "../infrastructure/templates/TemplateValidator";
+export type {
+  ExpectedTemplateStatistics,
+  OfficialTemplate,
+  OfficialTemplateVariant
+} from "../infrastructure/templates/OfficialTemplate";
