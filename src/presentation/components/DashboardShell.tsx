@@ -18,14 +18,26 @@ import {
   Toolbar,
   Typography
 } from "@mui/material";
-
-const sampleRows = [
-  { step: 1, branch: "B1", index: "2", before: "01", prediction: "NT", actual: "T" },
-  { step: 2, branch: "B2", index: "1", before: "10", prediction: "T", actual: "T" },
-  { step: 3, branch: "B1", index: "2", before: "10", prediction: "T", actual: "NT" }
-];
+import { useSimulationStore } from "../stores/simulationStore";
 
 export function DashboardShell() {
+  const {
+    templates,
+    selectedTemplateId,
+    mode,
+    currentStep,
+    tableView,
+    statistics,
+    selectTemplate,
+    setMode,
+    step,
+    runAll,
+    reset,
+    calculateStats
+  } = useSimulationStore();
+  const selectedTemplate = templates.find((template) => template.id === selectedTemplateId) ?? templates[0];
+  const selectedVariant = selectedTemplate.variants[0];
+
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
       <AppBar position="static" color="inherit" elevation={0}>
@@ -33,7 +45,11 @@ export function DashboardShell() {
           <Typography component="h1" variant="h1" sx={{ flexGrow: 1 }}>
             Branch Predictor Simulator
           </Typography>
-          <Tabs value="exam" aria-label="Modo de trabajo">
+          <Tabs
+            value={mode}
+            aria-label="Modo de trabajo"
+            onChange={(_event, value: "exam" | "solution") => setMode(value)}
+          >
             <Tab value="exam" label="Examen" />
             <Tab value="solution" label="Solucion" />
           </Tabs>
@@ -58,28 +74,29 @@ export function DashboardShell() {
             }}
           >
             <EditorPanel title="C didactico" value={"for (int i = 0; i < 10; i++) {\n  a += i;\n}"} />
-            <EditorPanel
-              title="RISC-V"
-              value={"0x38 bge r4, r0, else # B1\n0x44 bne r7, r8, loop # B2"}
-            />
+            <EditorPanel title="RISC-V" value={"0x38 bge r4, r0, else # B1\n0x44 bne r7, r8, loop # B2"} />
           </Box>
 
           <Paper variant="outlined" sx={{ overflow: "hidden" }}>
             <Stack direction="row" spacing={1} sx={{ p: 1.5, alignItems: "center" }}>
-              <Button startIcon={<PlayArrowIcon />} variant="contained">
+              <Button startIcon={<PlayArrowIcon />} variant="contained" onClick={step}>
                 Paso
               </Button>
-              <Button startIcon={<SkipNextIcon />} variant="outlined">
+              <Button startIcon={<SkipNextIcon />} variant="outlined" onClick={runAll}>
                 Todo
               </Button>
-              <Button startIcon={<RestartAltIcon />} variant="outlined" color="inherit">
+              <Button startIcon={<RestartAltIcon />} variant="outlined" color="inherit" onClick={reset}>
                 Reiniciar
               </Button>
+              <Typography sx={{ ml: "auto" }} variant="body2">
+                Paso {currentStep} / {selectedTemplate.branchSequence.executions.length}
+              </Typography>
             </Stack>
             <Divider />
             <Box sx={{ overflowX: "auto" }}>
               <Box
                 component="table"
+                aria-label="Tabla de simulacion"
                 sx={{
                   width: "100%",
                   borderCollapse: "collapse",
@@ -95,25 +112,25 @@ export function DashboardShell() {
               >
                 <thead>
                   <tr>
-                    <th>Iteracion</th>
-                    <th>Salto</th>
-                    <th>Indice</th>
-                    <th>Estado antes</th>
-                    <th>Prediccion</th>
-                    <th>Real</th>
+                    {tableView.columns.map((column) => (
+                      <th key={column.id}>{column.label}</th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {sampleRows.map((row) => (
-                    <tr key={row.step}>
-                      <td>{row.step}</td>
-                      <td>{row.branch}</td>
-                      <td>{row.index}</td>
-                      <td>{row.before}</td>
-                      <td>{row.prediction}</td>
-                      <td>{row.actual}</td>
+                  {tableView.rows.length === 0 ? (
+                    <tr>
+                      <td colSpan={tableView.columns.length}>Sin pasos ejecutados</td>
                     </tr>
-                  ))}
+                  ) : (
+                    tableView.rows.map((row) => (
+                      <tr key={row.id}>
+                        {tableView.columns.map((column) => (
+                          <td key={column.id}>{row.cells[column.id]?.value}</td>
+                        ))}
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </Box>
             </Box>
@@ -129,24 +146,44 @@ export function DashboardShell() {
               Configuracion
             </Typography>
             <FormControl fullWidth size="small">
-              <InputLabel id="predictor-type-label">Predictor</InputLabel>
-              <Select labelId="predictor-type-label" label="Predictor" value="one-level">
-                <MenuItem value="one-level">Un nivel</MenuItem>
-                <MenuItem value="two-level">(n,m)</MenuItem>
-                <MenuItem value="gshare">gshare</MenuItem>
-                <MenuItem value="gselect">gselect</MenuItem>
+              <InputLabel id="template-label">Plantilla</InputLabel>
+              <Select
+                labelId="template-label"
+                label="Plantilla"
+                value={selectedTemplateId}
+                onChange={(event) => selectTemplate(event.target.value)}
+              >
+                {templates.map((template) => (
+                  <MenuItem key={template.id} value={template.id}>
+                    {template.title}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
-            <TextField label="Bits por contador" size="small" value="2" />
-            <TextField label="Entradas" size="small" value="4" />
-            <TextField label="Estado inicial" size="small" value="01" />
+            <TextField label="Variante" size="small" value={selectedVariant.title} InputProps={{ readOnly: true }} />
+            <TextField
+              label="Enunciado"
+              size="small"
+              value={selectedTemplate.statement}
+              multiline
+              minRows={3}
+              InputProps={{ readOnly: true }}
+            />
             <Divider />
             <Typography component="h2" variant="h2">
               Estadisticas
             </Typography>
-            <TextField label="Aciertos" size="small" />
-            <TextField label="Fallos" size="small" />
-            <Button variant="contained">Calcular</Button>
+            <TextField label="Aciertos" size="small" value={statistics?.hits ?? ""} InputProps={{ readOnly: true }} />
+            <TextField label="Fallos" size="small" value={statistics?.misses ?? ""} InputProps={{ readOnly: true }} />
+            <TextField
+              label="Tasa acierto"
+              size="small"
+              value={statistics ? `${(statistics.hitRate.value * 100).toFixed(2)}%` : ""}
+              InputProps={{ readOnly: true }}
+            />
+            <Button variant="contained" onClick={calculateStats}>
+              Calcular
+            </Button>
           </Stack>
         </Paper>
       </Box>
