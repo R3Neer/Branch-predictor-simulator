@@ -34,6 +34,7 @@ export function DashboardShell() {
     mode,
     cSource,
     riscVSource,
+    sourceSyncState,
     sessionYamlInput,
     sessionImportError,
     translationDiagnostics,
@@ -45,6 +46,7 @@ export function DashboardShell() {
     selectTemplate,
     selectVariant,
     updateCSource,
+    updateRiscVSource,
     updateSessionYamlInput,
     importSessionYaml,
     setMode,
@@ -91,8 +93,13 @@ export function DashboardShell() {
               gap: 2
             }}
           >
-            <EditorPanel title="C didactico" value={cSource} onChange={updateCSource} />
-            <EditorPanel title="RISC-V" value={riscVSource} readOnly />
+            <EditorPanel
+              title="C didactico"
+              value={cSource}
+              readOnly={sourceSyncState === "desynced"}
+              onChange={updateCSource}
+            />
+            <EditorPanel title="RISC-V" value={riscVSource} onChange={updateRiscVSource} />
           </Box>
           {translationDiagnostics.length > 0 ? (
             <Stack spacing={1}>

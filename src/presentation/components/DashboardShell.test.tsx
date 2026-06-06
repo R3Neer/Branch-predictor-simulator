@@ -15,6 +15,7 @@ for (; i < N; i++) a -= i;
 printf(a);`);
     useSimulationStore.setState({
       mode: "exam",
+      sourceSyncState: "synced",
       exportedTable: undefined,
       exportedSessionYaml: undefined,
       sessionYamlInput: "",
@@ -105,5 +106,22 @@ printf(a);`);
     expect(textboxes[0].value).toContain("#define N 10");
     expect(textboxes[1].value).toContain("bge x7, x5, end");
     expect(screen.getByText("Paso 0 / 6")).toBeInTheDocument();
+  });
+
+  it("blocks C and omits it from YAML after manual RISC-V edits", () => {
+    render(<App />);
+
+    const [cEditor, riscVEditor] = screen.getAllByRole("textbox") as HTMLTextAreaElement[];
+    fireEvent.change(riscVEditor, {
+      target: { value: "0x00 bne x1, x2, loop # B1" }
+    });
+
+    expect(cEditor).toHaveAttribute("readonly");
+    expect(screen.getByText(/RISC-V fue editado manualmente/)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "YAML" }));
+    const yamlArea = screen.getByLabelText("Sesion YAML") as HTMLTextAreaElement;
+    expect(yamlArea.value).toContain("syncState: desynced");
+    expect(yamlArea.value).not.toContain("cSource:");
   });
 });

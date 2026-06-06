@@ -8,7 +8,9 @@ import {
   type CTranslationDiagnostic,
   type BranchSequence,
   type DynamicTableView,
+  type Language,
   type SessionMode,
+  type SourceSyncState,
   type StatisticsSet,
   type TraceStep
 } from "../../application";
@@ -28,9 +30,11 @@ interface SimulationStoreState {
   readonly activeVariantTitle: string;
   readonly activeBranchSequence: BranchSequence;
   readonly activePredictorConfig: unknown;
+  readonly language: Language;
   readonly mode: SessionMode;
   readonly cSource: string;
   readonly riscVSource: string;
+  readonly sourceSyncState: SourceSyncState;
   readonly sessionYamlInput: string;
   readonly sessionImportError?: string;
   readonly translationDiagnostics: readonly CTranslationDiagnostic[];
@@ -43,6 +47,7 @@ interface SimulationStoreState {
   readonly selectTemplate: (templateId: string) => void;
   readonly selectVariant: (variantId: string) => void;
   readonly updateCSource: (source: string) => void;
+  readonly updateRiscVSource: (source: string) => void;
   readonly updateSessionYamlInput: (source: string) => void;
   readonly importSessionYaml: () => void;
   readonly setMode: (mode: SessionMode) => void;
@@ -81,9 +86,11 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
   activeVariantTitle: initialVariant.title,
   activeBranchSequence: initialTemplate.branchSequence,
   activePredictorConfig: initialVariant.predictorConfig,
+  language: "es",
   mode: "exam",
   cSource: initialCSource,
   riscVSource: initialTranslation.riscVSource,
+  sourceSyncState: "synced",
   sessionYamlInput: "",
   translationDiagnostics: initialTranslation.diagnostics,
   currentStep: 0,
@@ -100,6 +107,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       activeVariantTitle: variant.title,
       activeBranchSequence: template.branchSequence,
       activePredictorConfig: variant.predictorConfig,
+      language: "es",
       currentStep: 0,
       trace: [],
       statistics: undefined,
@@ -134,8 +142,27 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
     set({
       cSource: source,
       riscVSource: translation.riscVSource,
+      sourceSyncState: "synced",
       translationDiagnostics: translation.diagnostics,
       exportedSessionYaml: undefined
+    });
+  },
+  updateRiscVSource: (source) => {
+    set({
+      riscVSource: source,
+      sourceSyncState: "desynced",
+      translationDiagnostics: [
+        {
+          severity: "warning",
+          message: "El RISC-V fue editado manualmente; el C queda bloqueado y no se exportara en YAML."
+        }
+      ],
+      currentStep: 0,
+      trace: [],
+      statistics: undefined,
+      exportedTable: undefined,
+      exportedSessionYaml: undefined,
+      tableView: project([], get().mode)
     });
   },
   updateSessionYamlInput: (source) => {
@@ -150,9 +177,11 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
         activeVariantTitle: "Configuracion importada",
         activeBranchSequence: session.branchSequence,
         activePredictorConfig: session.predictorConfig,
+        language: session.language,
         mode: session.mode,
         cSource: session.source.cSource ?? "",
         riscVSource: session.source.riscVSource,
+        sourceSyncState: session.source.syncState,
         translationDiagnostics: [],
         currentStep: 0,
         trace: [],
@@ -227,13 +256,13 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       exportedSessionYaml: sessionYamlMapper.toYaml({
         version: 1,
         title: state.activeTitle,
-        language: "es",
+        language: state.language,
         mode: state.mode,
         predictorConfig: state.activePredictorConfig,
         source: {
           cSource: state.cSource,
           riscVSource: state.riscVSource,
-          syncState: "synced"
+          syncState: state.sourceSyncState
         },
         branchSequence: state.activeBranchSequence
       })
