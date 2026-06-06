@@ -13,6 +13,9 @@ import {
 } from "../../application";
 import type { OfficialTemplate, OfficialTemplateVariant } from "../../infrastructure/templates/OfficialTemplate";
 import { officialTemplates } from "../../infrastructure/templates/officialTemplates";
+import { CsvTableExporter, MarkdownTableExporter } from "../../infrastructure/export/TableExporters";
+
+export type TableExportFormat = "csv" | "markdown";
 
 interface SimulationStoreState {
   readonly templates: readonly OfficialTemplate[];
@@ -25,6 +28,7 @@ interface SimulationStoreState {
   readonly currentStep: number;
   readonly trace: readonly TraceStep[];
   readonly tableView: DynamicTableView;
+  readonly exportedTable?: string;
   readonly statistics?: StatisticsSet;
   readonly selectTemplate: (templateId: string) => void;
   readonly updateCSource: (source: string) => void;
@@ -33,11 +37,16 @@ interface SimulationStoreState {
   readonly runAll: () => void;
   readonly reset: () => void;
   readonly calculateStats: () => void;
+  readonly exportTable: (format: TableExportFormat) => void;
 }
 
 const tableProjector = new TableProjector();
 const predictorFactory = new PredictorFactory();
 const cTranslator = new CTranslator();
+const tableExporters: Record<TableExportFormat, { export: (tableView: DynamicTableView) => string }> = {
+  csv: new CsvTableExporter(),
+  markdown: new MarkdownTableExporter()
+};
 
 const initialTemplate = officialTemplates[0];
 const initialVariant = initialTemplate.variants[0];
@@ -67,6 +76,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       currentStep: 0,
       trace: [],
       statistics: undefined,
+      exportedTable: undefined,
       tableView: project([], get().mode)
     });
   },
@@ -88,6 +98,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       currentStep: trace.length,
       trace,
       statistics: undefined,
+      exportedTable: undefined,
       tableView: project(trace, get().mode)
     });
   },
@@ -98,6 +109,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       currentStep: trace.length,
       trace,
       statistics: undefined,
+      exportedTable: undefined,
       tableView: project(trace, get().mode)
     });
   },
@@ -106,6 +118,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       currentStep: 0,
       trace: [],
       statistics: undefined,
+      exportedTable: undefined,
       tableView: project([], get().mode)
     });
   },
@@ -121,6 +134,9 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
     set({
       statistics: new StatsCalculator().calculate(get().trace, memoryUsage)
     });
+  },
+  exportTable: (format) => {
+    set({ exportedTable: tableExporters[format].export(get().tableView) });
   }
 }));
 

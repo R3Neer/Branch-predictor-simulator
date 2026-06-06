@@ -1,6 +1,7 @@
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
+import DownloadIcon from "@mui/icons-material/Download";
 import {
   Alert,
   AppBar,
@@ -31,6 +32,7 @@ export function DashboardShell() {
     translationDiagnostics,
     currentStep,
     tableView,
+    exportedTable,
     statistics,
     selectTemplate,
     updateCSource,
@@ -38,7 +40,8 @@ export function DashboardShell() {
     step,
     runAll,
     reset,
-    calculateStats
+    calculateStats,
+    exportTable
   } = useSimulationStore();
   const selectedTemplate = templates.find((template) => template.id === selectedTemplateId) ?? templates[0];
   const selectedVariant = selectedTemplate.variants[0];
@@ -102,6 +105,12 @@ export function DashboardShell() {
               <Button startIcon={<RestartAltIcon />} variant="outlined" color="inherit" onClick={reset}>
                 Reiniciar
               </Button>
+              <Button startIcon={<DownloadIcon />} variant="outlined" onClick={() => exportTable("csv")}>
+                CSV
+              </Button>
+              <Button startIcon={<DownloadIcon />} variant="outlined" onClick={() => exportTable("markdown")}>
+                Markdown
+              </Button>
               <Typography sx={{ ml: "auto" }} variant="body2">
                 Paso {currentStep} / {selectedTemplate.branchSequence.executions.length}
               </Typography>
@@ -149,6 +158,18 @@ export function DashboardShell() {
               </Box>
             </Box>
           </Paper>
+          {exportedTable ? (
+            <TextField
+              label="Exportacion"
+              multiline
+              minRows={4}
+              value={exportedTable}
+              InputProps={{
+                readOnly: true,
+                sx: { fontFamily: '"Roboto Mono", Consolas, monospace', fontSize: "0.8125rem" }
+              }}
+            />
+          ) : undefined}
         </Stack>
 
         <Paper

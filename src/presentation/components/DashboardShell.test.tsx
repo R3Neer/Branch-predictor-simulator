@@ -1,9 +1,16 @@
 import "@testing-library/jest-dom/vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { App } from "../screens/App";
+import { useSimulationStore } from "../stores/simulationStore";
 
 describe("DashboardShell", () => {
+  beforeEach(() => {
+    useSimulationStore.getState().selectTemplate("exercise-1-one-level-2bit");
+    useSimulationStore.getState().reset();
+    useSimulationStore.setState({ mode: "exam", exportedTable: undefined });
+  });
+
   it("runs a template step and calculates statistics from the domain trace", () => {
     render(<App />);
 
@@ -38,5 +45,16 @@ describe("DashboardShell", () => {
 
     expect(screen.getByDisplayValue(/addi x7, x0, 3/)).toBeInTheDocument();
     expect(screen.getByDisplayValue(/add x5, x5, x6/)).toBeInTheDocument();
+  });
+
+  it("exports the current projected table to Markdown", () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Paso" }));
+    fireEvent.click(screen.getByRole("button", { name: "Markdown" }));
+
+    const exportArea = screen.getByLabelText("Exportacion") as HTMLTextAreaElement;
+    expect(exportArea.value).toContain("| Iteracion | Salto |");
+    expect(exportArea.value).toContain("| 1 | B1 |");
   });
 });
