@@ -2,6 +2,7 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
 import DownloadIcon from "@mui/icons-material/Download";
+import FactCheckIcon from "@mui/icons-material/FactCheck";
 import {
   Alert,
   AppBar,
@@ -30,13 +31,15 @@ export function DashboardShell() {
     activeTitle,
     activeStatement,
     activeVariantTitle,
-    activeBranchSequence,
     mode,
     cSource,
     riscVSource,
     sourceSyncState,
+    totalSteps,
     sessionYamlInput,
     sessionImportError,
+    statAnswerInputs,
+    correctionReport,
     translationDiagnostics,
     currentStep,
     tableView,
@@ -48,12 +51,14 @@ export function DashboardShell() {
     updateCSource,
     updateRiscVSource,
     updateSessionYamlInput,
+    updateStatAnswer,
     importSessionYaml,
     setMode,
     step,
     runAll,
     reset,
     calculateStats,
+    checkAnswers,
     exportTable,
     exportSessionYaml
   } = useSimulationStore();
@@ -132,7 +137,7 @@ export function DashboardShell() {
                 YAML
               </Button>
               <Typography sx={{ ml: "auto" }} variant="body2">
-                Paso {currentStep} / {activeBranchSequence.executions.length}
+                Paso {currentStep} / {totalSteps}
               </Typography>
             </Stack>
             <Divider />
@@ -277,6 +282,39 @@ export function DashboardShell() {
             <Typography component="h2" variant="h2">
               Estadisticas
             </Typography>
+            <TextField
+              label="Respuesta aciertos"
+              size="small"
+              value={statAnswerInputs.hits}
+              onChange={(event) => updateStatAnswer("hits", event.target.value)}
+            />
+            <TextField
+              label="Respuesta fallos"
+              size="small"
+              value={statAnswerInputs.misses}
+              onChange={(event) => updateStatAnswer("misses", event.target.value)}
+            />
+            <TextField
+              label="Respuesta tasa acierto"
+              size="small"
+              value={statAnswerInputs.hitRate}
+              onChange={(event) => updateStatAnswer("hitRate", event.target.value)}
+            />
+            <Button startIcon={<FactCheckIcon />} variant="outlined" onClick={checkAnswers}>
+              Comprobar
+            </Button>
+            {correctionReport ? (
+              <Alert
+                severity={
+                  correctionReport.summary.total > 0 &&
+                  correctionReport.summary.correct === correctionReport.summary.total
+                    ? "success"
+                    : "info"
+                }
+              >
+                {correctionReport.summary.correct} / {correctionReport.summary.total} respuestas correctas
+              </Alert>
+            ) : undefined}
             <TextField label="Aciertos" size="small" value={statistics?.hits ?? ""} InputProps={{ readOnly: true }} />
             <TextField label="Fallos" size="small" value={statistics?.misses ?? ""} InputProps={{ readOnly: true }} />
             <TextField

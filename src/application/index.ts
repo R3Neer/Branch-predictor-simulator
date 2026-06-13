@@ -11,6 +11,7 @@ export type {
   CorrectionReport,
   StatAnswer,
   StatCorrection,
+  StatisticKey,
   TableAnswer,
   UserSolution
 } from "../domain/correction/AnswerChecker";

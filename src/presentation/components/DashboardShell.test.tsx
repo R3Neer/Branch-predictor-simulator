@@ -19,7 +19,8 @@ printf(a);`);
       exportedTable: undefined,
       exportedSessionYaml: undefined,
       sessionYamlInput: "",
-      sessionImportError: undefined
+      sessionImportError: undefined,
+      correctionReport: undefined
     });
   });
 
@@ -68,6 +69,18 @@ printf(a);`);
     const exportArea = screen.getByLabelText("Exportacion") as HTMLTextAreaElement;
     expect(exportArea.value).toContain("| Iteracion | Salto |");
     expect(exportArea.value).toContain("| 1 | B1 |");
+  });
+
+  it("checks statistic answers without revealing expected values", () => {
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Todo" }));
+    fireEvent.change(screen.getByLabelText("Respuesta aciertos"), {
+      target: { value: "0" }
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Comprobar" }));
+
+    expect(screen.getByText(/respuestas correctas/)).toBeInTheDocument();
   });
 
   it("exports the current editable input as YAML without derived statistics", () => {

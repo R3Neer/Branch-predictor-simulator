@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import {
+  AnswerChecker,
   CTranslator,
   PredictorFactory,
   SequenceExpander,
@@ -8,10 +9,12 @@ import {
   TableProjector,
   type CTranslationDiagnostic,
   type BranchSequence,
+  type CorrectionReport,
   type DynamicTableView,
   type Language,
   type SessionMode,
   type SourceSyncState,
+  type StatisticKey,
   type StatisticsSet,
   type TraceStep
 } from "../../application";
@@ -36,8 +39,11 @@ interface SimulationStoreState {
   readonly cSource: string;
   readonly riscVSource: string;
   readonly sourceSyncState: SourceSyncState;
+  readonly totalSteps: number;
   readonly sessionYamlInput: string;
   readonly sessionImportError?: string;
+  readonly statAnswerInputs: Record<StatisticKey, string>;
+  readonly correctionReport?: CorrectionReport;
   readonly translationDiagnostics: readonly CTranslationDiagnostic[];
   readonly currentStep: number;
   readonly trace: readonly TraceStep[];
@@ -50,12 +56,14 @@ interface SimulationStoreState {
   readonly updateCSource: (source: string) => void;
   readonly updateRiscVSource: (source: string) => void;
   readonly updateSessionYamlInput: (source: string) => void;
+  readonly updateStatAnswer: (key: StatisticKey, value: string) => void;
   readonly importSessionYaml: () => void;
   readonly setMode: (mode: SessionMode) => void;
   readonly step: () => void;
   readonly runAll: () => void;
   readonly reset: () => void;
   readonly calculateStats: () => void;
+  readonly checkAnswers: () => void;
   readonly exportTable: (format: TableExportFormat) => void;
   readonly exportSessionYaml: () => void;
 }
@@ -64,10 +72,20 @@ const tableProjector = new TableProjector();
 const predictorFactory = new PredictorFactory();
 const sequenceExpander = new SequenceExpander();
 const cTranslator = new CTranslator();
+const answerChecker = new AnswerChecker();
 const sessionYamlMapper = new SessionYamlMapper();
 const tableExporters: Record<TableExportFormat, { export: (tableView: DynamicTableView) => string }> = {
   csv: new CsvTableExporter(),
   markdown: new MarkdownTableExporter()
+};
+const emptyStatAnswerInputs: Record<StatisticKey, string> = {
+  hits: "",
+  misses: "",
+  hitRate: "",
+  missRate: "",
+  memoryBits: "",
+  usedEntries: "",
+  aliasingEvents: ""
 };
 
 const initialTemplate = officialTemplates[0];
@@ -93,7 +111,9 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
   cSource: initialCSource,
   riscVSource: initialTranslation.riscVSource,
   sourceSyncState: "synced",
+  totalSteps: expandedLength(initialTemplate.branchSequence),
   sessionYamlInput: "",
+  statAnswerInputs: emptyStatAnswerInputs,
   translationDiagnostics: initialTranslation.diagnostics,
   currentStep: 0,
   trace: [],
@@ -110,9 +130,12 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       activeBranchSequence: template.branchSequence,
       activePredictorConfig: variant.predictorConfig,
       language: "es",
+      totalSteps: expandedLength(template.branchSequence),
       currentStep: 0,
       trace: [],
       statistics: undefined,
+      correctionReport: undefined,
+      statAnswerInputs: emptyStatAnswerInputs,
       exportedTable: undefined,
       exportedSessionYaml: undefined,
       sessionImportError: undefined,
@@ -133,6 +156,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       currentStep: 0,
       trace: [],
       statistics: undefined,
+      correctionReport: undefined,
       exportedTable: undefined,
       exportedSessionYaml: undefined,
       sessionImportError: undefined,
@@ -146,6 +170,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       riscVSource: translation.riscVSource,
       sourceSyncState: "synced",
       translationDiagnostics: translation.diagnostics,
+      correctionReport: undefined,
       exportedSessionYaml: undefined
     });
   },
@@ -162,6 +187,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       currentStep: 0,
       trace: [],
       statistics: undefined,
+      correctionReport: undefined,
       exportedTable: undefined,
       exportedSessionYaml: undefined,
       tableView: project([], get().mode)
@@ -169,6 +195,15 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
   },
   updateSessionYamlInput: (source) => {
     set({ sessionYamlInput: source, sessionImportError: undefined });
+  },
+  updateStatAnswer: (key, value) => {
+    set({
+      statAnswerInputs: {
+        ...get().statAnswerInputs,
+        [key]: value
+      },
+      correctionReport: undefined
+    });
   },
   importSessionYaml: () => {
     try {
@@ -184,10 +219,13 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
         cSource: session.source.cSource ?? "",
         riscVSource: session.source.riscVSource,
         sourceSyncState: session.source.syncState,
+        totalSteps: expandedLength(session.branchSequence),
         translationDiagnostics: [],
         currentStep: 0,
         trace: [],
         statistics: undefined,
+        correctionReport: undefined,
+        statAnswerInputs: emptyStatAnswerInputs,
         exportedTable: undefined,
         exportedSessionYaml: undefined,
         sessionImportError: undefined,
@@ -209,6 +247,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       currentStep: trace.length,
       trace,
       statistics: undefined,
+      correctionReport: undefined,
       exportedTable: undefined,
       exportedSessionYaml: undefined,
       tableView: project(trace, get().mode)
@@ -221,6 +260,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       currentStep: trace.length,
       trace,
       statistics: undefined,
+      correctionReport: undefined,
       exportedTable: undefined,
       exportedSessionYaml: undefined,
       tableView: project(trace, get().mode)
@@ -231,22 +271,26 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       currentStep: 0,
       trace: [],
       statistics: undefined,
+      correctionReport: undefined,
       exportedTable: undefined,
       exportedSessionYaml: undefined,
       tableView: project([], get().mode)
     });
   },
   calculateStats: () => {
-    const predictorConfig = get().activePredictorConfig;
-    const predictor = predictorFactory.create(predictorConfig);
-    const memoryUsage =
-      predictor && "memoryUsage" in predictor
-        ? (predictor.memoryUsage as (config: unknown) => { bits: number; entries: number })(
-            predictorConfig
-          )
-        : undefined;
     set({
-      statistics: new StatsCalculator().calculate(get().trace, memoryUsage)
+      statistics: calculateStatsForTrace(get().trace, get().activePredictorConfig)
+    });
+  },
+  checkAnswers: () => {
+    const state = get();
+    const statAnswers = Object.entries(state.statAnswerInputs)
+      .filter(([, raw]) => raw.trim().length > 0)
+      .map(([key, raw]) => ({ key: key as StatisticKey, raw }));
+    const stats = calculateStatsForTrace(state.trace, state.activePredictorConfig);
+
+    set({
+      correctionReport: answerChecker.compare({ tableAnswers: [], statAnswers }, state.trace, stats)
     });
   },
   exportTable: (format) => {
@@ -296,6 +340,22 @@ function runTrace(
 
 function project(trace: readonly TraceStep[], mode: SessionMode) {
   return tableProjector.project(trace, { mode, language: "es", revealSolution: mode === "solution" });
+}
+
+function expandedLength(branchSequence: BranchSequence) {
+  return sequenceExpander.expand(branchSequence).length;
+}
+
+function calculateStatsForTrace(trace: readonly TraceStep[], predictorConfig: unknown) {
+  const predictor = predictorFactory.create(predictorConfig);
+  const memoryUsage =
+    predictor && "memoryUsage" in predictor
+      ? (predictor.memoryUsage as (config: unknown) => { bits: number; entries: number })(
+          predictorConfig
+        )
+      : undefined;
+
+  return new StatsCalculator().calculate(trace, memoryUsage);
 }
 
 function translateSafely(source: string) {

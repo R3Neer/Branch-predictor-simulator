@@ -71,5 +71,22 @@ branchSequence:
     expect(useSimulationStore.getState().sessionImportError).toBeUndefined();
     expect(useSimulationStore.getState().currentStep).toBe(6);
     expect(useSimulationStore.getState().trace).toHaveLength(6);
+    expect(useSimulationStore.getState().totalSteps).toBe(6);
+  });
+
+  it("checks statistic answers against the canonical trace", () => {
+    const store = useSimulationStore.getState();
+
+    store.runAll();
+    useSimulationStore.getState().calculateStats();
+    const hits = useSimulationStore.getState().statistics?.hits;
+
+    useSimulationStore.getState().updateStatAnswer("hits", String(hits));
+    useSimulationStore.getState().checkAnswers();
+
+    expect(useSimulationStore.getState().correctionReport?.summary).toEqual({
+      total: 1,
+      correct: 1
+    });
   });
 });
