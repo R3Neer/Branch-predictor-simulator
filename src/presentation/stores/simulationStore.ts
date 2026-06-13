@@ -2,6 +2,7 @@ import { create } from "zustand";
 import {
   CTranslator,
   PredictorFactory,
+  SequenceExpander,
   SimulationEngine,
   StatsCalculator,
   TableProjector,
@@ -61,6 +62,7 @@ interface SimulationStoreState {
 
 const tableProjector = new TableProjector();
 const predictorFactory = new PredictorFactory();
+const sequenceExpander = new SequenceExpander();
 const cTranslator = new CTranslator();
 const sessionYamlMapper = new SessionYamlMapper();
 const tableExporters: Record<TableExportFormat, { export: (tableView: DynamicTableView) => string }> = {
@@ -273,15 +275,16 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
 function runTrace(
   branchSequence: BranchSequence,
   predictorConfig: unknown,
-  limit = branchSequence.executions.length
+  limit = sequenceExpander.expand(branchSequence).length
 ) {
   const predictor = predictorFactory.create(predictorConfig);
   if (!predictor) {
     return [];
   }
+  const expandedExecutions = sequenceExpander.expand(branchSequence);
 
   const limitedSequence = {
-    executions: branchSequence.executions.slice(0, limit),
+    executions: expandedExecutions.slice(0, limit),
     loops: []
   };
   const engine = new SimulationEngine();
