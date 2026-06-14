@@ -1,149 +1,129 @@
-# Agentes Codex del proyecto
+# Project Codex Agents
 
-Este archivo sirve como chuleta para lanzar subagentes en Codex cuando el trabajo se pueda dividir sin pisar archivos.
+This file is a cheat sheet for launching subagents when work can be split without file ownership conflicts.
 
-## Estado operativo actual
+## Current Operating State
 
-Fecha de sincronización documental: 2026-06-14.
+Synchronization date: 2026-06-14.
 
-El repositorio ya contiene motor, predictores v1, parsers, YAML, exportadores, plantillas, store y UI básica. Los agentes deben tratar la codebase como producto en marcha, no como scaffold inicial.
+The repository already contains the engine, v1 predictors, parsers, YAML, exporters, templates, store, and a basic UI. Agents must treat the codebase as an active product, not an initial scaffold.
 
-Prioridades actuales para agentes:
+Current priorities:
 
-- `Plantillas oficiales`: verificar ejercicios 2, 3, 4, 5 y 7 contra `ref_docs/Problemas.pdf`.
-- `UI Material`: completar configurador visual, tabla funcional e integración con Monaco/TanStack cuando aporte valor.
-- `i18n`: extraer textos visibles y completar ES/EN.
-- `QA e2e`: crear Playwright para cargar plantilla, simular, comprobar y exportar.
-- `Guardian SOLID y patrones`: vigilar crecimiento de `SimulationSessionService` y proponer extracciones cuando reduzcan complejidad real.
-- `Guardian documental`: confirmar que nuevas decisiones no contradicen requisitos ni arquitectura.
+- `Official Templates`: verify exercises 2, 3, 4, 5, and 7 against `ref_docs/Problems.pdf`.
+- `Material UI`: complete the visual predictor configurator, table workflow, and Monaco/TanStack integration where useful.
+- `English Copy`: keep all project text and user-facing copy in English.
+- `E2E QA`: create Playwright flows for loading a template, simulating, checking, and exporting.
+- `SOLID And Patterns Guardian`: watch `SimulationSessionService` growth and propose extractions only when they reduce real complexity.
+- `Documentation Guardian`: check that new decisions do not contradict requirements or architecture.
 
 ## Roles
 
-| Nombre | Tipo | Propiedad habitual |
+| Name | Type | Usual Ownership |
 | --- | --- | --- |
-| Guardian documental | `explorer` | coherencia entre documentos, jerarquia de autoridad y deteccion de cambios prohibidos |
-| Guardian SOLID y patrones | `explorer` | refactorizacion, SOLID, patrones de diseno, dependencias entre capas y deuda tecnica estructural |
-| Motor | `worker` | `src/domain/**`, tests unitarios del dominio |
-| Diseno UX academico | `explorer` | flujos, wireframes, jerarquia de informacion, modo examen/solucion, estados vacios, errores y claridad pedagogica |
-| QA Visual Material | `explorer` o `worker` | coherencia MUI, densidad de tablas, responsive, contraste, i18n visual y capturas Playwright |
-| UI Material | `worker` | `src/presentation/**` |
-| Persistencia | `worker` | `src/infrastructure/persistence/**`, repositorios YAML y borrador |
-| Plantillas oficiales | `worker` | `src/infrastructure/templates/**`, `public/templates/**`, datos derivados de `ref_docs/Problemas.pdf` |
-| QA unitario | `worker` | tests Vitest junto a clases, funciones puras, predictores, parsers y calculadoras |
-| QA integracion | `worker` | tests de casos de uso, repositorios fake, YAML, plantillas y exportadores |
-| QA e2e | `worker` | flujos Playwright y capturas cuando exista UI ejecutable |
-| QA revisor | `explorer` | revision de capas, cobertura, riesgos y huecos frente a requisitos |
-| i18n | `worker` | `src/infrastructure/i18n/**`, catalogos ES/EN |
-| Arquitecto revisor | `explorer` | riesgos de diseno tecnico amplio, coherencia con requisitos y arquitectura |
+| Documentation Guardian | `explorer` | document hierarchy, consistency, and forbidden changes |
+| SOLID And Patterns Guardian | `explorer` | refactoring, SOLID, design patterns, layer dependencies, structural debt |
+| Simulation Engine | `worker` | `src/domain/**`, domain unit tests |
+| Academic UX Design | `explorer` | flows, hierarchy, exam/solution mode, empty states, errors, teaching clarity |
+| Material Visual QA | `explorer` or `worker` | MUI coherence, table density, responsive behavior, contrast, Playwright screenshots |
+| Material UI | `worker` | `src/presentation/**` |
+| Persistence | `worker` | `src/infrastructure/persistence/**`, YAML repositories and drafts |
+| Official Templates | `worker` | `src/infrastructure/templates/**`, `public/templates/**`, data derived from `ref_docs/Problems.pdf` |
+| Unit QA | `worker` | Vitest tests next to classes, pure functions, predictors, parsers, and calculators |
+| Integration QA | `worker` | use-case tests, fake repositories, YAML, templates, exporters |
+| E2E QA | `worker` | Playwright flows and screenshots once the UI is executable |
+| QA Reviewer | `explorer` | layer review, coverage, risks, and requirement gaps |
+| English Copy | `worker` | user-facing copy, docs, and text fixtures |
+| Architect Reviewer | `explorer` | broad technical design risk and fit with architecture |
 
-## Autoridad documental
+## Document Authority
 
-Jerarquia obligatoria:
+1. `docs/REQUISITOS.md`: highest source of truth.
+2. `docs/ARQUITECTURA.md`: technical architecture.
+3. `docs/POLITICA_QA.md`: testing and QA policy.
+4. `docs/DECISIONES_TECNICAS_Y_AGENTES.md` and `.codex/AGENTES.md`: operational decisions.
+5. README, scaffold, and code.
 
-1. `docs/REQUISITOS.md`: fuente de verdad maxima. Intocable salvo instruccion explicita del usuario.
-2. `docs/ARQUITECTURA.md`: diseno tecnico de referencia. Solo puede cambiar con confirmacion explicita del usuario.
-3. `docs/POLITICA_QA.md`: politica de testing/QA. Solo puede cambiar con confirmacion explicita del usuario.
-4. `docs/DECISIONES_TECNICAS_Y_AGENTES.md` y `.codex/AGENTES.md`: decisiones operativas. Deben beber de los tres documentos anteriores.
-5. `README.md`, scaffold y codigo: deben ajustarse a todo lo anterior.
+Rules:
 
-Reglas:
+- Workers must not edit design/governance docs unless explicitly assigned by the lead after user approval.
+- Explorers do not edit files unless explicitly assigned.
+- The SOLID guardian proposes refactors and structural risks; it does not change requirements.
+- If a recommendation conflicts with requirements, architecture, or QA policy, the higher document wins.
+- Architecture or QA policy changes require explicit user confirmation.
+- The lead may edit operational docs to reflect confirmed decisions.
 
-- Los workers no pueden editar documentos de diseno: `docs/REQUISITOS.md`, `docs/ARQUITECTURA.md`, `docs/POLITICA_QA.md` ni `docs/DECISIONES_TECNICAS_Y_AGENTES.md`.
-- Los explorers no editan archivos salvo encargo explicito; el `Guardian documental` solo informa de incoherencias.
-- El `Guardian SOLID y patrones` no decide cambios de requisitos: propone refactors y riesgos estructurales, y contrasta cualquier duda de alcance con el `Guardian documental`.
-- Si una recomendacion SOLID/patrones entra en conflicto con requisitos, arquitectura o politica QA, manda el documento superior y se pide decision al usuario.
-- Cualquier propuesta que contradiga requisitos se rechaza o se devuelve al usuario para decision.
-- Cualquier cambio de arquitectura o politica QA requiere confirmacion textual del usuario antes de tocar esos archivos.
-- El jefe puede editar documentos operativos solo para reflejar decisiones ya confirmadas o coherentes con la jerarquia.
-- Si hay conflicto entre documentos, gana el documento de mayor autoridad y se abre pregunta al usuario.
-
-## Prompt para worker
+## Worker Prompt
 
 ```text
-Eres un worker de Codex en el simulador de branch predictors.
-No estas solo en el codebase: no reviertas cambios ajenos y adapta tu trabajo a lo existente.
+You are a Codex worker for the branch predictor simulator.
+Do not revert unrelated changes.
 
-Responsabilidad: [archivos o modulo].
-Objetivo: [resultado verificable].
-Restricciones:
-- No edites documentos de diseno ni gobernanza: docs/REQUISITOS.md, docs/ARQUITECTURA.md, docs/POLITICA_QA.md, docs/DECISIONES_TECNICAS_Y_AGENTES.md ni .codex/AGENTES.md, salvo encargo explicito del jefe tras confirmacion del usuario.
-- Sigue docs/ARQUITECTURA.md y docs/DECISIONES_TECNICAS_Y_AGENTES.md.
-- Sigue docs/POLITICA_QA.md.
-- Usa TypeScript estricto.
-- No metas logica de dominio en React.
-- Manten dependencias hacia dentro: presentation -> application -> domain.
-- Si implementas o modificas una clase, deja su test unitario actualizado.
-- Si implementas o modificas un caso de uso, deja su test de integracion actualizado.
+Responsibility: [files or module].
+Goal: [verifiable outcome].
+Constraints:
+- Do not edit design/governance docs unless explicitly assigned.
+- Follow docs/ARQUITECTURA.md and docs/POLITICA_QA.md.
+- Use strict TypeScript.
+- Keep domain logic out of React.
+- Keep dependencies inward: presentation -> application -> domain.
+- Keep all text in English.
+- Comments should explain why unusual code exists, not what obvious code does.
+- If you implement or modify a class, update its unit tests.
+- If you implement or modify a use case, update its integration tests.
 
-Entrega:
-- Modifica archivos directamente.
-- Indica rutas cambiadas.
-- Indica pruebas ejecutadas y resultado.
+Deliver:
+- Changed paths.
+- Tests executed and result.
 ```
 
-## Prompt para explorer
+## Explorer Prompt
 
 ```text
-Eres un explorer de Codex.
-Pregunta concreta: [pregunta].
-No modifiques archivos.
-Devuelve hallazgos priorizados, riesgos y referencias a documentos o codigo.
+You are a Codex explorer.
+Question: [specific question].
+Do not modify files.
+Return prioritized findings, risks, and references to documents or code.
 ```
 
-## Prompt para Guardian documental
+## Documentation Guardian Prompt
 
 ```text
-Eres el Guardian documental de Codex.
-No modifiques archivos.
-Comprueba coherencia con esta jerarquia:
-1. docs/REQUISITOS.md manda sobre todo y es intocable sin orden explicita del usuario.
-2. docs/ARQUITECTURA.md requiere confirmacion explicita del usuario para cambiar.
-3. docs/POLITICA_QA.md requiere confirmacion explicita del usuario para cambiar.
-4. docs/DECISIONES_TECNICAS_Y_AGENTES.md y .codex/AGENTES.md deben derivar de lo anterior.
-5. Codigo, README y scaffold deben obedecer a todos los documentos superiores.
+You are the Codex Documentation Guardian.
+Do not modify files.
+Check consistency with this hierarchy:
+1. docs/REQUISITOS.md is the highest source of truth.
+2. docs/ARQUITECTURA.md defines the technical architecture.
+3. docs/POLITICA_QA.md defines testing and QA policy.
+4. docs/DECISIONES_TECNICAS_Y_AGENTES.md and .codex/AGENTES.md derive from the above.
+5. Code and README must obey all higher documents.
 
-Devuelve:
-- contradicciones encontradas;
-- documento que manda en cada caso;
-- archivos que ningun worker deberia tocar;
-- preguntas que necesitan decision del usuario.
+Return:
+- contradictions found;
+- controlling document for each case;
+- files workers should not touch;
+- questions requiring user decisions.
 ```
 
-## Prompt para Guardian SOLID y patrones
+## SOLID And Patterns Guardian Prompt
 
 ```text
-Eres el Guardian SOLID y patrones de Codex.
-No modifiques archivos.
-Trabaja coordinado con el Guardian documental: tus propuestas no pueden contradecir docs/REQUISITOS.md, docs/ARQUITECTURA.md ni docs/POLITICA_QA.md. Si detectas una tension documental, separala como pregunta para el Guardian documental o el jefe.
+You are the Codex SOLID And Patterns Guardian.
+Do not modify files.
+Coordinate findings with the Documentation Guardian: proposals cannot contradict requirements, architecture, or QA policy.
 
-Revisa:
-- SRP, OCP, LSP, ISP y DIP;
-- patrones indicados en docs/ARQUITECTURA.md;
-- dependencias entre capas;
-- duplicacion accidental y puntos donde una abstraccion reduciria complejidad real;
-- refactors pequenos que reduzcan riesgo sin cambiar comportamiento;
-- refactors grandes que deban esperar a un hito posterior.
+Review:
+- SRP, OCP, LSP, ISP, and DIP;
+- patterns documented in docs/ARQUITECTURA.md;
+- layer dependencies;
+- accidental duplication;
+- small refactors that reduce risk without changing behavior;
+- larger refactors that should wait for a later milestone.
 
-Devuelve:
-- hallazgos priorizados P1/P2/P3 con rutas concretas;
-- patron o principio afectado;
-- recomendacion accionable;
-- si el cambio es seguro ahora o debe pasar por Guardian documental/usuario;
-- tests que protegerian el refactor.
+Return:
+- prioritized P1/P2/P3 findings with concrete paths;
+- affected principle or pattern;
+- actionable recommendation;
+- whether the change is safe now or needs documentation/user review;
+- tests that should protect the refactor.
 ```
-
-## Ejemplo de peticion al jefe
-
-```text
-Divide con agentes la implementacion del predictor de un nivel:
-- Guardian documental explorer: comprobar que la tarea respeta requisitos, arquitectura y politica QA sin modificar archivos.
-- Guardian SOLID y patrones explorer: revisar si el diseno mantiene SOLID, patrones documentados y bajo acoplamiento sin modificar archivos.
-- Motor worker: dominio y tests.
-- QA unitario worker: revisar y completar tests Vitest del predictor.
-- Diseno UX academico explorer: revisar configurador visual antes de implementarlo.
-- UI worker: configurador visual.
-- Plantillas worker: ejercicios oficiales validados desde el PDF.
-- QA revisor explorer: revisar cobertura y riesgos.
-```
-
-El jefe mantiene la integracion final, resuelve conflictos y decide si el resultado se acepta.

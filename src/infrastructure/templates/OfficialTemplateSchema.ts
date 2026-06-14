@@ -9,7 +9,7 @@ export const officialTemplateSchema = z.object({
   verificationStatus: z.union([z.literal("verified"), z.literal("draft")]),
   title: z.string().min(1),
   statement: z.string().min(1),
-  source: z.literal("ref_docs/Problemas.pdf"),
+  source: z.literal("ref_docs/Problems.pdf"),
   pdfReference: z.string().min(1),
   branchSequence: z.object({
     executions: z.array(

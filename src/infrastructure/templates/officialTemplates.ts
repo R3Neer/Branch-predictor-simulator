@@ -5,11 +5,11 @@ export const officialTemplates: readonly OfficialTemplate[] = [
     id: "exercise-1-one-level-2bit",
     exerciseNumber: 1,
     verificationStatus: "verified",
-    title: "Ejercicio 1: predictor de 2 bits",
-    source: "ref_docs/Problemas.pdf",
-    pdfReference: "Problemas EC - Predictores, ejercicio 1, pagina 1",
+    title: "Exercise 1: 2-bit predictor",
+    source: "ref_docs/Problems.pdf",
+    pdfReference: "EC Problems - Predictors, exercise 1, page 1",
     statement:
-      "Codigo con un unico salto. Estado inicial 10 y comportamientos NT-T-NT-NT-T-T.",
+      "Code with a single branch. Initial state 10 and outcomes NT-T-NT-NT-T-T.",
     branchSequence: {
       executions: outcomes(["NT", "T", "NT", "NT", "T", "T"]).map((actual, order) => ({
         order,
@@ -22,10 +22,10 @@ export const officialTemplates: readonly OfficialTemplate[] = [
     variants: [
       {
         id: "one-level-2bit",
-        title: "Predictor de 2 bits",
-        initialState: "contador B1 = 10",
+        title: "2-bit predictor",
+        initialState: "B1 counter = 10",
         officialSolution: {
-          summary: "Tabla oficial: 1 acierto y 5 fallos; estado final 10."
+          summary: "Official table: 1 hit and 5 misses; final state 10."
         },
         predictorConfig: {
           type: "one-level",
@@ -42,11 +42,11 @@ export const officialTemplates: readonly OfficialTemplate[] = [
     id: "exercise-2-two-level",
     exerciseNumber: 2,
     verificationStatus: "draft",
-    title: "Ejercicio 2: multinivel (1,1) y (1,2)",
-    source: "ref_docs/Problemas.pdf",
-    pdfReference: "Problemas EC - Predictores, ejercicio 2, paginas 1-2",
+    title: "Exercise 2: two-level (1,1) and (1,2)",
+    source: "ref_docs/Problems.pdf",
+    pdfReference: "EC Problems - Predictors, exercise 2, pages 1-2",
     statement:
-      "Secuencia B1/B2/B3 tras estar repetidamente tomados. Comparar predictores (1,1) y (1,2).",
+      "B1/B2/B3 sequence after repeatedly being taken. Compare predictors (1,1) and (1,2).",
     branchSequence: {
       executions: outcomes(["NT", "T", "NT", "T", "NT", "T", "NT", "T", "NT", "T", "NT", "T", "NT", "T", "NT"]).map(
         (actual, order) => ({
@@ -61,10 +61,10 @@ export const officialTemplates: readonly OfficialTemplate[] = [
     variants: [
       {
         id: "two-level-1-1",
-        title: "Predictor multinivel (1,1)",
-        initialState: "P1 estabilizado a tomado tras ejecuciones repetidas; P0 inicial segun enunciado.",
+        title: "Two-level predictor (1,1)",
+        initialState: "P1 stabilized as taken after repeated executions; initial P0 follows the statement.",
         officialSolution: {
-          summary: "Solucion oficial: 6 fallos de 15, tasa de fallos 40%."
+          summary: "Official solution: 6 misses out of 15, miss rate 40%."
         },
         predictorConfig: {
           type: "two-level",
@@ -80,10 +80,10 @@ export const officialTemplates: readonly OfficialTemplate[] = [
       },
       {
         id: "two-level-1-2",
-        title: "Predictor multinivel (1,2)",
-        initialState: "P1 estabilizado fuerte tomado; P0 segun tabla oficial.",
+        title: "Two-level predictor (1,2)",
+        initialState: "P1 stabilized as strongly taken; P0 follows the official table.",
         officialSolution: {
-          summary: "Solucion oficial: 12 fallos de 15, tasa de fallos 80%."
+          summary: "Official solution: 12 misses out of 15, miss rate 80%."
         },
         predictorConfig: {
           type: "two-level",
@@ -103,11 +103,11 @@ export const officialTemplates: readonly OfficialTemplate[] = [
     id: "exercise-3-two-level-3-2",
     exerciseNumber: 3,
     verificationStatus: "draft",
-    title: "Ejercicio 3: predictor (3,2), 512 entradas, 9 LSBs",
-    source: "ref_docs/Problemas.pdf",
-    pdfReference: "Problemas EC - Predictores, ejercicio 3, paginas 2-3",
+    title: "Exercise 3: (3,2) predictor, 512 entries, 9 LSBs",
+    source: "ref_docs/Problems.pdf",
+    pdfReference: "EC Problems - Predictors, exercise 3, pages 2-3",
     statement:
-      "Predictor (3,2) con 512 entradas y acceso directo usando 9 LSBs. Sin aliasing entre B1 y B2.",
+      "Predictor (3,2) with 512 entries and direct access using 9 LSBs. No aliasing between B1 and B2.",
     branchSequence: {
       executions: outcomes(["NT", "T", "NT", "T", "NT", "T", "NT", "T", "NT", "T", "NT", "T", "T", "T", "NT"]).map(
         (actual, order) => ({
@@ -123,9 +123,9 @@ export const officialTemplates: readonly OfficialTemplate[] = [
       {
         id: "two-level-3-2-512",
         title: "Predictor (3,2)",
-        initialState: "GHR = 000; todos los contadores = 01.",
+        initialState: "GHR = 000; all counters = 01.",
         officialSolution: {
-          summary: "Solucion oficial: tasa de errores 5/15; memoria 512 * 8 * 2 = 8192 bits."
+          summary: "Official solution: error rate 5/15; memory 512 * 8 * 2 = 8192 bits."
         },
         predictorConfig: {
           type: "two-level",
@@ -137,7 +137,7 @@ export const officialTemplates: readonly OfficialTemplate[] = [
           initialCounterValue: 1,
           indexPolicy: { type: "lsb", entries: 512, addressBits: 9 }
         },
-        expectedStatistics: { hits: 10, misses: 5, memoryBits: 8192, notes: "Memoria oficial: 1 kB." }
+        expectedStatistics: { hits: 10, misses: 5, memoryBits: 8192, notes: "Official memory: 1 kB." }
       }
     ]
   },
@@ -145,11 +145,11 @@ export const officialTemplates: readonly OfficialTemplate[] = [
     id: "exercise-4-global-correlated-2-2",
     exerciseNumber: 4,
     verificationStatus: "draft",
-    title: "Ejercicio 4: correlacionado (2,2) con B1/B2",
-    source: "ref_docs/Problemas.pdf",
-    pdfReference: "Problemas EC - Predictores, ejercicio 4, paginas 3-4",
+    title: "Exercise 4: correlated (2,2) with B1/B2",
+    source: "ref_docs/Problems.pdf",
+    pdfReference: "EC Problems - Predictors, exercise 4, pages 3-4",
     statement:
-      "Fragmento con saltos B1 y B2, GHR inicial 11 y entradas inicialmente 11.",
+      "Fragment with branches B1 and B2, initial GHR 11, and entries initially 11.",
     branchSequence: {
       executions: outcomes(["NT", "T", "T", "T", "NT", "T", "T", "T", "NT", "T", "NT", "NT"]).map(
         (actual, order) => ({
@@ -164,10 +164,10 @@ export const officialTemplates: readonly OfficialTemplate[] = [
     variants: [
       {
         id: "global-correlated-2-2",
-        title: "Correlacionado (2,2)",
-        initialState: "GHR = 11; todas las entradas de prediccion = 11.",
+        title: "Correlated (2,2)",
+        initialState: "GHR = 11; all prediction entries = 11.",
         officialSolution: {
-          summary: "Solucion oficial: 4 fallos de 12."
+          summary: "Official solution: 4 misses out of 12."
         },
         predictorConfig: {
           type: "two-level",
@@ -187,11 +187,11 @@ export const officialTemplates: readonly OfficialTemplate[] = [
     id: "exercise-5-gshare",
     exerciseNumber: 5,
     verificationStatus: "draft",
-    title: "Ejercicio 5: gshare",
-    source: "ref_docs/Problemas.pdf",
-    pdfReference: "Problemas EC - Predictores, ejercicio 5, paginas 4-5",
+    title: "Exercise 5: gshare",
+    source: "ref_docs/Problems.pdf",
+    pdfReference: "EC Problems - Predictors, exercise 5, pages 4-5",
     statement:
-      "Predictor gshare con 256 predictores de 2 bits, GHR inicial NT y salto en 0x54.",
+      "gshare predictor with 256 2-bit predictors, initial GHR NT, and branch at 0x54.",
     branchSequence: {
       executions: outcomes([...Array.from({ length: 15 }, () => "T"), "NT"]).map((actual, order) => ({
         order,
@@ -204,10 +204,10 @@ export const officialTemplates: readonly OfficialTemplate[] = [
     variants: [
       {
         id: "gshare-256-2bit",
-        title: "gshare 256 entradas",
-        initialState: "GHR = 00000000; todos los predictores = NT (00).",
+        title: "gshare 256 entries",
+        initialState: "GHR = 00000000; all predictors = NT (00).",
         officialSolution: {
-          summary: "Solucion oficial: 9 predictores de segundo nivel usados, 11 fallos y 5 aciertos."
+          summary: "Official solution: 9 second-level predictors used, 11 misses and 5 hits."
         },
         predictorConfig: {
           type: "gshare",
@@ -227,11 +227,11 @@ export const officialTemplates: readonly OfficialTemplate[] = [
     id: "exercise-7-pattern-ttn",
     exerciseNumber: 7,
     verificationStatus: "draft",
-    title: "Ejercicio 7: patron T-T-NT con predictor (2,2)",
-    source: "ref_docs/Problemas.pdf",
-    pdfReference: "Problemas EC - Predictores, ejercicio 7, pagina 6",
+    title: "Exercise 7: T-T-NT pattern with predictor (2,2)",
+    source: "ref_docs/Problems.pdf",
+    pdfReference: "EC Problems - Predictors, exercise 7, page 6",
     statement:
-      "Salto con patron T-T-NT usando predictor dinamico (2,2), estructuras inicializadas a cero.",
+      "Branch with T-T-NT pattern using a dynamic (2,2) predictor, structures initialized to zero.",
     branchSequence: {
       executions: outcomes(["T", "T", "NT", "T", "T", "NT", "T", "T", "NT", "T", "T", "NT", "T"]).map(
         (actual, order) => ({ order, branchId: "B1", actual, manualIndex: 0 })
@@ -242,9 +242,9 @@ export const officialTemplates: readonly OfficialTemplate[] = [
       {
         id: "two-level-2-2-single-pattern",
         title: "Predictor (2,2)",
-        initialState: "Todas las estructuras y registros inicializados a 0.",
+        initialState: "All structures and registers initialized to 0.",
         officialSolution: {
-          summary: "La solucion oficial indica que a partir de la ejecucion 8 acierta siempre.",
+          summary: "The official solution states that it always hits from execution 8 onward.",
           stableFromStep: 8
         },
         predictorConfig: {
@@ -257,7 +257,7 @@ export const officialTemplates: readonly OfficialTemplate[] = [
           initialCounterValue: 0,
           indexPolicy: { type: "manual", entries: 1 }
         },
-        expectedStatistics: { notes: "La solucion oficial indica acierto estable desde la ejecucion 8." }
+        expectedStatistics: { notes: "The official solution states stable hits from execution 8 onward." }
       }
     ]
   }

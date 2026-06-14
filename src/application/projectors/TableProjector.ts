@@ -1,7 +1,7 @@
 import type { TraceStep } from "../../domain/simulation/TraceStep";
 
 export type SessionMode = "exam" | "solution";
-export type Language = "es" | "en";
+export type Language = "en";
 
 export interface TableProjectorOptions {
   readonly mode: SessionMode;
@@ -31,18 +31,6 @@ export interface DynamicTableView {
 }
 
 const labels: Record<Language, Record<string, string>> = {
-  es: {
-    iteration: "Iteracion",
-    branch: "Salto",
-    index: "Indice",
-    counterBefore: "Contador antes",
-    prediction: "Prediccion",
-    actual: "Real",
-    hit: "Acierto",
-    hitValue: "Acierto",
-    missValue: "Fallo",
-    counterAfter: "Contador despues"
-  },
   en: {
     iteration: "Iteration",
     branch: "Branch",
@@ -60,6 +48,7 @@ const labels: Record<Language, Record<string, string>> = {
 export class TableProjector {
   project(trace: readonly TraceStep[], options: TableProjectorOptions): DynamicTableView {
     const solutionHidden = options.mode === "exam" && options.revealSolution !== true;
+    const localizedLabels = labels[options.language];
     const columns = [
       "iteration",
       "branch",
@@ -69,7 +58,7 @@ export class TableProjector {
       "actual",
       "hit",
       "counterAfter"
-    ].map((id) => ({ id, label: labels[options.language][id] }));
+    ].map((id) => ({ id, label: localizedLabels[id] }));
 
     return {
       columns,
@@ -84,7 +73,7 @@ export class TableProjector {
           prediction: maybeHidden(step.prediction, solutionHidden),
           actual: visible(step.actual),
           hit: maybeHidden(
-            step.hit ? labels[options.language].hitValue : labels[options.language].missValue,
+            step.hit ? localizedLabels.hitValue : localizedLabels.missValue,
             solutionHidden
           ),
           counterAfter: maybeHidden(step.updateTrace.counterAfter ?? "", solutionHidden)

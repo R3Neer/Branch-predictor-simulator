@@ -27,7 +27,7 @@ export interface SessionYamlPort {
 export interface PersistableStudySession {
   readonly version: 1;
   readonly title: string;
-  readonly language: "es" | "en";
+  readonly language: "en";
   readonly mode: "exam" | "solution";
   readonly predictorConfig: unknown;
   readonly source: SourceBundle;
@@ -142,7 +142,7 @@ export class SimulationSessionService {
   project(trace: readonly TraceStep[], mode: SessionMode) {
     return this.tableProjector.project(trace, {
       mode,
-      language: "es",
+      language: "en",
       revealSolution: mode === "solution"
     });
   }

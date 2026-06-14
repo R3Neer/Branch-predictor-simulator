@@ -1,52 +1,52 @@
 # Branch Predictor Simulator
 
-Aplicacion web local para estudiar y resolver ejercicios de predictores de saltos de la asignatura Estructura de Computadores de la Universidad Complutense de Madrid.
+Local web application for studying and solving branch predictor exercises from the Computer Structure course at Universidad Complutense de Madrid.
 
-La app permite trabajar desde C didactico, RISC-V o una secuencia manual de saltos, ejecutar la simulacion paso a paso o completa, consultar tablas y estadisticas, corregir respuestas del usuario y exportar sesiones/resultados.
+The app can work from didactic C, RISC-V, or a manual branch sequence. It runs canonical simulations, projects dynamic tables, calculates statistics, checks user answers, and exports sessions/results.
 
-## Fuente De Verdad
+## Source Of Truth
 
-La documentacion viva del proyecto es:
+The living project documentation is:
 
-- `docs/REQUISITOS.md`: alcance funcional y requisitos de v1.
-- `docs/ARQUITECTURA.md`: modelo de dominio, capas, contratos y patrones.
-- `docs/POLITICA_QA.md`: politica de pruebas, gates y responsabilidades QA.
-- `docs/DECISIONES_TECNICAS_Y_AGENTES.md`: decisiones tecnicas, herramientas y agentes Codex.
-- `.codex/AGENTES.md`: chuleta operativa para subagentes.
-- `ref_docs/Problemas.pdf`: ejercicios oficiales de predictores.
-- `ref_docs/Teoría.pdf`: material de referencia.
+- `docs/REQUISITOS.md`: v1 functional scope and requirements.
+- `docs/ARQUITECTURA.md`: domain model, layers, contracts, and design patterns.
+- `docs/POLITICA_QA.md`: test policy, quality gates, and QA responsibilities.
+- `docs/DECISIONES_TECNICAS_Y_AGENTES.md`: technical decisions, tools, and Codex agents.
+- `.codex/AGENTES.md`: operational cheat sheet for subagents.
+- `ref_docs/Problems.pdf`: official branch predictor exercises.
+- `ref_docs/Theory.pdf`: course reference material.
 
-`docs/REQUISITOS.md` y `docs/ARQUITECTURA.md` mandan sobre las decisiones de implementacion.
+`docs/REQUISITOS.md` and `docs/ARQUITECTURA.md` drive implementation decisions.
 
-## Estado Actual
+## Current Status
 
-Estado estimado de v1: aproximadamente 45-50%.
+Estimated v1 progress: 45-50%.
 
-Ya esta implementado:
+Implemented:
 
-- Scaffold Vite + React + TypeScript.
-- Arquitectura por capas: `domain`, `application`, `infrastructure` y `presentation`.
-- Motor canonico de simulacion con ejecucion paso a paso, ejecucion completa, reinicio por reconstruccion de traza, expansion de bucles y snapshots en traza.
-- Predictores v1 principales: un nivel, dos niveles `(n,m)`, correlacionado global, `gshare`, `gselect` y correlacionado local.
-- Indexadores LSB, manual, XOR y concatenacion.
-- Estadisticas desde traza canonica: aciertos, fallos, tasas, memoria, entradas usadas y aliasing.
-- Proyeccion de tabla, calculos compactos, exportacion CSV/Markdown y YAML de sesion.
-- Parser RISC-V inicial para saltos condicionales, etiquetas, direcciones y comentarios.
-- Traductor C didactico para bucles y operaciones simples orientadas a ejercicios de saltos.
-- Secuencia manual editable en texto con `B1..Bn`, `T/NT`, direccion/indice, comentarios y rangos repetidos.
-- Correccion de estadisticas y respuestas de tabla.
-- Plantillas oficiales de ejercicios 1, 2, 3, 4, 5 y 7 versionadas como datos; el ejercicio 1 esta verificado y el resto sigue marcado como borrador.
-- UI funcional con MUI, Zustand y controles principales de plantilla, variante, editores, tabla, estadisticas, importacion/exportacion y modos examen/solucion.
+- Vite + React + TypeScript scaffold.
+- Layered architecture: `domain`, `application`, `infrastructure`, and `presentation`.
+- Canonical simulation engine with partial/full execution, loop expansion, and trace snapshots.
+- Main v1 predictors: one-level, two-level `(n,m)`, global correlated, `gshare`, `gselect`, and local correlated.
+- LSB, manual, XOR, and concatenation indexers.
+- Trace-derived statistics: hits, misses, rates, memory, used entries, and aliasing.
+- Table projection, compact calculations, CSV/Markdown table export, and YAML session export/import.
+- Initial RISC-V parser for conditional branches, labels, addresses, and comments.
+- Didactic C translator for loop/branch exercises; it is not a general C compiler.
+- Editable manual sequence text format with `B1..Bn`, `T/NT`, optional address/index, comments, and repeated ranges.
+- Statistic and table answer checking.
+- Official templates for exercises 1, 2, 3, 4, 5, and 7 as versioned data; exercise 1 is verified, the rest are drafts.
+- Functional MUI/Zustand UI for templates, variants, editors, table, statistics, checking, and import/export.
 
-Pendiente para cerrar v1:
+Remaining v1 work:
 
-- Revisar y verificar contra PDF las plantillas 2, 3, 4, 5 y 7.
-- Completar configurador visual de predictores y flujos de UI esperados.
-- Sustituir editores de texto por Monaco donde aporte valor operativo.
-- Integrar TanStack Table en la tabla principal si la complejidad de columnas lo justifica.
-- Completar i18n real ES/EN.
-- Cubrir flujos UI criticos con Testing Library y Playwright.
-- QA visual, responsive, accesibilidad basica y checklist de release.
+- Verify templates 2, 3, 4, 5, and 7 against the PDF.
+- Complete the visual predictor configurator and expected UI flows.
+- Replace text fields with Monaco where it improves the workflow.
+- Use TanStack Table in the main table if dynamic columns become complex enough.
+- Complete English-only user-facing copy and future i18n infrastructure only when explicitly requested.
+- Add Testing Library and Playwright coverage for critical UI flows.
+- Finish visual QA, responsive checks, basic accessibility, and release checklist.
 
 ## Stack
 
@@ -55,17 +55,17 @@ Pendiente para cerrar v1:
 - React
 - MUI Material UI
 - Zustand
-- TanStack Table, instalado para tablas avanzadas
-- Monaco Editor, instalado para editores de codigo
+- TanStack Table, installed for advanced tables
+- Monaco Editor, installed for code editors
 - Zod
 - yaml
-- i18next + react-i18next
+- i18next + react-i18next, installed for future localization work
 - Vitest
 - Testing Library
-- Playwright previsto para e2e
+- Playwright, planned for e2e
 - ESLint + Prettier
 
-## Desarrollo Local
+## Local Development
 
 ```powershell
 npm.cmd install
@@ -75,9 +75,9 @@ npm.cmd run lint
 npm.cmd run build
 ```
 
-`npm.cmd` es recomendable en Windows si PowerShell bloquea el wrapper `npm.ps1`.
+Use `npm.cmd` on Windows if PowerShell blocks the `npm.ps1` wrapper.
 
-Antes de cerrar cambios de codigo deben pasar:
+Required gates before closing code changes:
 
 ```powershell
 npm.cmd test
@@ -85,7 +85,7 @@ npm.cmd run lint
 npm.cmd run build
 ```
 
-## Estructura
+## Structure
 
 ```text
 src/
@@ -114,4 +114,4 @@ docs/
 ref_docs/
 ```
 
-Regla clave: el dominio no depende de React, MUI, Zustand, YAML, DOM ni almacenamiento de navegador. La UI llama a la capa de aplicacion y consume proyecciones derivadas de la traza canonica.
+Key rule: the domain does not depend on React, MUI, Zustand, YAML, the DOM, or browser storage. The UI calls the application layer and consumes projections derived from the canonical trace.

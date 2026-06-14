@@ -14,7 +14,7 @@ const config: OneLevelConfig = {
 describe("TableProjector", () => {
   it("hides solution-derived cells in exam mode until requested", () => {
     const trace = buildTrace();
-    const view = new TableProjector().project(trace, { mode: "exam", language: "es" });
+    const view = new TableProjector().project(trace, { mode: "exam", language: "en" });
 
     expect(view.hiddenUntilRequested).toBe(true);
     expect(view.rows[0].cells.actual).toEqual({ value: "T", hidden: false });
@@ -32,12 +32,6 @@ describe("TableProjector", () => {
     expect(view.rows[0].cells.hit).toEqual({ value: "Miss", hidden: false });
   });
 
-  it("localizes miss values in Spanish solution mode", () => {
-    const trace = buildTrace();
-    const view = new TableProjector().project(trace, { mode: "solution", language: "es" });
-
-    expect(view.rows[0].cells.hit).toEqual({ value: "Fallo", hidden: false });
-  });
 });
 
 function buildTrace() {

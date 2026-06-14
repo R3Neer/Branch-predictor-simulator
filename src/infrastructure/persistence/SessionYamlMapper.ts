@@ -24,7 +24,7 @@ const loopRangeSchema = z.object({
 const sessionYamlSchema = z.object({
   version: z.literal(1),
   title: z.string(),
-  language: z.union([z.literal("es"), z.literal("en")]),
+  language: z.literal("en"),
   mode: z.union([z.literal("exam"), z.literal("solution")]),
   predictorConfig: predictorConfigSchema,
   source: z.object({
@@ -44,7 +44,7 @@ export type SessionYamlDto = z.infer<typeof sessionYamlSchema>;
 export interface StudySessionDraft {
   readonly version: 1;
   readonly title: string;
-  readonly language: "es" | "en";
+  readonly language: "en";
   readonly mode: "exam" | "solution";
   readonly predictorConfig: SessionYamlPredictorConfig;
   readonly source: SourceBundle;

@@ -32,7 +32,7 @@ export interface OfficialTemplate {
   readonly verificationStatus: TemplateVerificationStatus;
   readonly title: string;
   readonly statement: string;
-  readonly source: "ref_docs/Problemas.pdf";
+  readonly source: "ref_docs/Problems.pdf";
   readonly pdfReference: string;
   readonly branchSequence: BranchSequence;
   readonly variants: readonly OfficialTemplateVariant[];

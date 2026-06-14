@@ -6,7 +6,7 @@ import { officialTemplates } from "../templates/officialTemplates";
 const session: StudySessionDraft = {
   version: 1,
   title: "Exercise 1",
-  language: "es",
+  language: "en",
   mode: "exam",
   predictorConfig: {
     type: "one-level",

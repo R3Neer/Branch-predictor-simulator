@@ -24,7 +24,7 @@ describe("simulationStore", () => {
 
     expect(useSimulationStore.getState()).toMatchObject({
       selectedVariantId: "two-level-1-2",
-      activeVariantTitle: "Predictor multinivel (1,2)",
+      activeVariantTitle: "Two-level predictor (1,2)",
       currentStep: 0,
       trace: []
     });
@@ -38,7 +38,7 @@ describe("simulationStore", () => {
   it("preserves imported loop ranges when running a YAML session", () => {
     useSimulationStore.getState().updateSessionYamlInput(`version: 1
 title: Loop session
-language: es
+language: en
 mode: exam
 predictorConfig:
   type: one-level

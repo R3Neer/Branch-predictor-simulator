@@ -78,11 +78,11 @@ export function DashboardShell() {
           </Typography>
           <Tabs
             value={mode}
-            aria-label="Modo de trabajo"
+            aria-label="Work mode"
             onChange={(_event, value: "exam" | "solution") => setMode(value)}
           >
-            <Tab value="exam" label="Examen" />
-            <Tab value="solution" label="Solucion" />
+            <Tab value="exam" label="Exam" />
+            <Tab value="solution" label="Solution" />
           </Tabs>
         </Toolbar>
       </AppBar>
@@ -105,14 +105,14 @@ export function DashboardShell() {
             }}
           >
             <EditorPanel
-              title="C didactico"
+              title="Didactic C"
               value={cSource}
               readOnly={sourceSyncState === "desynced"}
               onChange={updateCSource}
             />
             <EditorPanel title="RISC-V" value={riscVSource} onChange={updateRiscVSource} />
             <EditorPanel
-              title="Secuencia manual"
+              title="Manual sequence"
               value={manualSequenceSource}
               onChange={updateManualSequenceSource}
             />
@@ -131,13 +131,13 @@ export function DashboardShell() {
           <Paper variant="outlined" sx={{ overflow: "hidden" }}>
             <Stack direction="row" spacing={1} sx={{ p: 1.5, alignItems: "center" }}>
               <Button startIcon={<PlayArrowIcon />} variant="contained" onClick={step}>
-                Paso
+                Step
               </Button>
               <Button startIcon={<SkipNextIcon />} variant="outlined" onClick={runAll}>
-                Todo
+                Run all
               </Button>
               <Button startIcon={<RestartAltIcon />} variant="outlined" color="inherit" onClick={reset}>
-                Reiniciar
+                Reset
               </Button>
               <Button startIcon={<DownloadIcon />} variant="outlined" onClick={() => exportTable("csv")}>
                 CSV
@@ -149,14 +149,14 @@ export function DashboardShell() {
                 YAML
               </Button>
               <Typography sx={{ ml: "auto" }} variant="body2">
-                Paso {currentStep} / {totalSteps}
+                Step {currentStep} / {totalSteps}
               </Typography>
             </Stack>
             <Divider />
             <Box sx={{ overflowX: "auto" }}>
               <Box
                 component="table"
-                aria-label="Tabla de simulacion"
+                aria-label="Simulation table"
                 sx={{
                   width: "100%",
                   borderCollapse: "collapse",
@@ -180,7 +180,7 @@ export function DashboardShell() {
                 <tbody>
                   {tableView.rows.length === 0 ? (
                     <tr>
-                      <td colSpan={tableView.columns.length}>Sin pasos ejecutados</td>
+                      <td colSpan={tableView.columns.length}>No executed steps</td>
                     </tr>
                   ) : (
                     tableView.rows.map((row) => (
@@ -197,7 +197,7 @@ export function DashboardShell() {
           </Paper>
           {exportedTable ? (
             <TextField
-              label="Exportacion"
+              label="Export"
               multiline
               minRows={4}
               value={exportedTable}
@@ -209,7 +209,7 @@ export function DashboardShell() {
           ) : undefined}
           {exportedSessionYaml ? (
             <TextField
-              label="Sesion YAML"
+              label="YAML session"
               multiline
               minRows={6}
               value={exportedSessionYaml}
@@ -222,10 +222,10 @@ export function DashboardShell() {
           <Paper variant="outlined" sx={{ p: 2 }}>
             <Stack spacing={1.5}>
               <Typography component="h2" variant="h2">
-                Importar sesion
+                Import session
               </Typography>
               <TextField
-                label="YAML de sesion"
+                label="Session YAML input"
                 multiline
                 minRows={5}
                 value={sessionYamlInput}
@@ -236,7 +236,7 @@ export function DashboardShell() {
               />
               {sessionImportError ? <Alert severity="warning">{sessionImportError}</Alert> : undefined}
               <Button variant="outlined" onClick={importSessionYaml}>
-                Importar
+                Import
               </Button>
             </Stack>
           </Paper>
@@ -248,13 +248,13 @@ export function DashboardShell() {
         >
           <Stack spacing={2}>
             <Typography component="h2" variant="h2">
-              Configuracion
+              Configuration
             </Typography>
             <FormControl fullWidth size="small">
-              <InputLabel id="template-label">Plantilla</InputLabel>
+              <InputLabel id="template-label">Template</InputLabel>
               <Select
                 labelId="template-label"
-                label="Plantilla"
+                label="Template"
                 value={selectedTemplateId}
                 onChange={(event) => selectTemplate(event.target.value)}
               >
@@ -265,12 +265,12 @@ export function DashboardShell() {
                 ))}
               </Select>
             </FormControl>
-            <TextField label="Sesion" size="small" value={activeTitle} InputProps={{ readOnly: true }} />
+            <TextField label="Session" size="small" value={activeTitle} InputProps={{ readOnly: true }} />
             <FormControl fullWidth size="small">
-              <InputLabel id="variant-label">Variante</InputLabel>
+              <InputLabel id="variant-label">Variant</InputLabel>
               <Select
                 labelId="variant-label"
-                label="Variante"
+                label="Variant"
                 value={selectedVariantId}
                 onChange={(event) => selectVariant(event.target.value)}
               >
@@ -281,9 +281,9 @@ export function DashboardShell() {
                 ))}
               </Select>
             </FormControl>
-            <TextField label="Variante activa" size="small" value={activeVariantTitle} InputProps={{ readOnly: true }} />
+            <TextField label="Active variant" size="small" value={activeVariantTitle} InputProps={{ readOnly: true }} />
             <TextField
-              label="Enunciado"
+              label="Statement"
               size="small"
               value={activeStatement}
               multiline
@@ -292,10 +292,10 @@ export function DashboardShell() {
             />
             <Divider />
             <Typography component="h2" variant="h2">
-              Estadisticas
+              Statistics
             </Typography>
             <TextField
-              label="Respuestas tabla"
+              label="Table answers"
               size="small"
               multiline
               minRows={3}
@@ -306,25 +306,25 @@ export function DashboardShell() {
               }}
             />
             <TextField
-              label="Respuesta aciertos"
+              label="Hits answer"
               size="small"
               value={statAnswerInputs.hits}
               onChange={(event) => updateStatAnswer("hits", event.target.value)}
             />
             <TextField
-              label="Respuesta fallos"
+              label="Misses answer"
               size="small"
               value={statAnswerInputs.misses}
               onChange={(event) => updateStatAnswer("misses", event.target.value)}
             />
             <TextField
-              label="Respuesta tasa acierto"
+              label="Hit rate answer"
               size="small"
               value={statAnswerInputs.hitRate}
               onChange={(event) => updateStatAnswer("hitRate", event.target.value)}
             />
             <Button startIcon={<FactCheckIcon />} variant="outlined" onClick={checkAnswers}>
-              Comprobar
+              Check
             </Button>
             {tableAnswerError ? <Alert severity="warning">{tableAnswerError}</Alert> : undefined}
             {correctionReport ? (
@@ -336,19 +336,19 @@ export function DashboardShell() {
                     : "info"
                 }
               >
-                {correctionReport.summary.correct} / {correctionReport.summary.total} respuestas correctas
+                {correctionReport.summary.correct} / {correctionReport.summary.total} correct answers
               </Alert>
             ) : undefined}
-            <TextField label="Aciertos" size="small" value={statistics?.hits ?? ""} InputProps={{ readOnly: true }} />
-            <TextField label="Fallos" size="small" value={statistics?.misses ?? ""} InputProps={{ readOnly: true }} />
+            <TextField label="Hits" size="small" value={statistics?.hits ?? ""} InputProps={{ readOnly: true }} />
+            <TextField label="Misses" size="small" value={statistics?.misses ?? ""} InputProps={{ readOnly: true }} />
             <TextField
-              label="Tasa acierto"
+              label="Hit rate"
               size="small"
               value={statistics ? `${(statistics.hitRate.value * 100).toFixed(2)}%` : ""}
               InputProps={{ readOnly: true }}
             />
             <Button variant="contained" onClick={calculateStats}>
-              Calcular
+              Calculate
             </Button>
           </Stack>
         </Paper>

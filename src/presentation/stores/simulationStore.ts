@@ -102,7 +102,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
   activeVariantTitle: initialVariant.title,
   activeBranchSequence: initialTemplate.branchSequence,
   activePredictorConfig: initialVariant.predictorConfig,
-  language: "es",
+  language: "en",
   mode: "exam",
   cSource: initialCSource,
   riscVSource: initialTranslation.riscVSource,
@@ -127,7 +127,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       activeVariantTitle: variant.title,
       activeBranchSequence: template.branchSequence,
       activePredictorConfig: variant.predictorConfig,
-      language: "es",
+      language: "en",
       manualSequenceSource: sessionService.formatManualBranchSequence(template.branchSequence),
       manualSequenceError: undefined,
       totalSteps: sessionService.expandedLength(template.branchSequence),
@@ -194,7 +194,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       translationDiagnostics: [
         {
           severity: "warning",
-          message: "El RISC-V fue editado manualmente; el C queda bloqueado y no se exportara en YAML."
+          message: "RISC-V was edited manually; C is locked and will not be exported to YAML."
         }
       ],
       currentStep: 0,
@@ -227,7 +227,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       set({
         manualSequenceSource: source,
         manualSequenceError:
-          error instanceof Error ? error.message : "No se pudo interpretar la secuencia manual."
+          error instanceof Error ? error.message : "The manual sequence could not be parsed."
       });
     }
   },
@@ -252,8 +252,8 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       const session = sessionService.importSessionYaml(get().sessionYamlInput);
       set({
         activeTitle: session.title,
-        activeStatement: "Sesion importada desde YAML.",
-        activeVariantTitle: "Configuracion importada",
+        activeStatement: "Session imported from YAML.",
+        activeVariantTitle: "Imported configuration",
         activeBranchSequence: session.branchSequence,
         activePredictorConfig: session.predictorConfig,
         language: session.language,
@@ -279,7 +279,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       });
     } catch (error) {
       set({
-        sessionImportError: error instanceof Error ? error.message : "No se pudo importar la sesion YAML."
+        sessionImportError: error instanceof Error ? error.message : "The YAML session could not be imported."
       });
     }
   },
@@ -346,7 +346,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
     } catch (error) {
       set({
         tableAnswerError:
-          error instanceof Error ? error.message : "No se pudieron comprobar las respuestas."
+          error instanceof Error ? error.message : "The answers could not be checked."
       });
     }
   },

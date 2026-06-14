@@ -1,18 +1,18 @@
-# Plantillas oficiales
+# Official Templates
 
-Este directorio contiene las plantillas versionadas derivadas de `ref_docs/Problemas.pdf`.
+This directory contains versioned templates derived from `ref_docs/Problems.pdf`.
 
-Estado actual:
+Current status:
 
-- Ejercicio 1: verificado contra el motor canonico.
-- Ejercicios 2, 3, 4, 5 y 7: presentes como datos de trabajo y marcados como `draft`.
-- Ejercicio 6: fuera de v1 porque requiere Tournament.
+- Exercise 1: verified against the canonical engine.
+- Exercises 2, 3, 4, 5, and 7: present as working data and marked as `draft`.
+- Exercise 6: outside v1 because it requires Tournament.
 
-Cada plantilla debe declarar:
+Each template must declare:
 
-- `id`, `exerciseNumber`, `title`, `statement` y referencia al PDF.
-- `branchSequence` con la secuencia canonica de saltos.
-- Una o varias `variants` con `predictorConfig`, estado inicial, resumen de solucion oficial y estadisticas esperadas.
-- `verificationStatus`, para distinguir plantillas verificadas de borradores.
+- `id`, `exerciseNumber`, `title`, `statement`, and PDF reference.
+- `branchSequence` with the canonical branch sequence.
+- One or more `variants` with `predictorConfig`, initial state, official solution summary, and expected statistics.
+- `verificationStatus`, to distinguish verified templates from drafts.
 
-Las plantillas no deben exponer soluciones calculadas a mano como fuente de verdad: deben validarse ejecutando el mismo motor de dominio que usa la aplicacion.
+Templates must not treat hand-written calculated solutions as the source of truth. They must be validated by running the same domain engine used by the application.
