@@ -1,11 +1,13 @@
 import "@testing-library/jest-dom/vitest";
-import { act, fireEvent, render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { App } from "../screens/App";
 import { useSimulationStore } from "../stores/simulationStore";
 
 describe("DashboardShell", () => {
   beforeEach(() => {
+    cleanup();
+    document.body.innerHTML = "";
     useSimulationStore.getState().selectTemplate("exercise-1-one-level-2bit");
     useSimulationStore.getState().reset();
     useSimulationStore.getState().updateCSource(`#define N 10
@@ -28,6 +30,11 @@ printf(a);`);
     });
   });
 
+  afterEach(() => {
+    cleanup();
+    document.body.innerHTML = "";
+  });
+
   it("runs a template step and calculates statistics from the domain trace", () => {
     render(<App />);
 
@@ -42,6 +49,8 @@ printf(a);`);
     fireEvent.click(screen.getByRole("button", { name: "Back" }));
     expect(screen.getByText("Step 0 / 6")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Back" })).toBeDisabled();
+    openSection("Statistics");
+    openSection("Answers");
     expect(screen.getByRole("button", { name: "Calculate" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Check" })).toBeDisabled();
     fireEvent.click(screen.getByRole("button", { name: "Export" }));
@@ -53,6 +62,7 @@ printf(a);`);
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "Run all" }));
+    openSection("Statistics");
     fireEvent.click(screen.getByRole("button", { name: "Calculate" }));
 
     expect(screen.getByLabelText("Hit rate")).toHaveValue("16.67%");
@@ -65,6 +75,7 @@ printf(a);`);
   it("edits the active predictor configuration through validated JSON", () => {
     render(<App />);
 
+    openSection("Predictor");
     const configEditor = screen.getByLabelText("Predictor configuration JSON");
     expect((configEditor as HTMLTextAreaElement).value).toContain('"type": "one-level"');
 
@@ -83,6 +94,7 @@ printf(a);`);
       }
     });
     fireEvent.click(screen.getByRole("button", { name: "Run all" }));
+    openSection("Statistics");
     fireEvent.click(screen.getByRole("button", { name: "Calculate" }));
 
     expect(screen.getByLabelText("Memory bits")).toHaveValue("1");
@@ -109,6 +121,7 @@ printf(a);`);
     fireEvent.click(screen.getByRole("tab", { name: "Solution" }));
 
     expect(screen.queryByText(/Step 1:/)).not.toBeInTheDocument();
+    openSection("Calculations");
     fireEvent.click(screen.getByRole("button", { name: "Show calculations" }));
 
     expect(screen.getByText(/Step 1:/)).toBeInTheDocument();
@@ -134,15 +147,17 @@ printf(a);`);
     fireEvent.click(screen.getByRole("button", { name: "Step" }));
     exportOption("Table as Markdown");
 
-    const exportArea = screen.getByLabelText("Table export") as HTMLTextAreaElement;
+    const exportArea = screen.getByRole("textbox", { name: "Table export" }) as HTMLTextAreaElement;
     expect(exportArea.value).toContain("| Iteration | Branch |");
     expect(exportArea.value).toContain("| 1 | B1 |");
+    closeExportDialog();
   });
 
   it("checks statistic answers without revealing expected values", () => {
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "Run all" }));
+    openSection("Answers");
     fireEvent.change(screen.getByLabelText("Hits answer"), {
       target: { value: "0" }
     });
@@ -155,6 +170,7 @@ printf(a);`);
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "Step" }));
+    openSection("Answers");
     fireEvent.change(screen.getByLabelText("Table answers"), {
       target: { value: "1 pred=T hit=miss" }
     });
@@ -175,34 +191,39 @@ printf(a);`);
     expect(screen.getByText("Step 2 / 2")).toBeInTheDocument();
 
     exportOption("Session as YAML");
-    const yamlArea = screen.getByLabelText("YAML session") as HTMLTextAreaElement;
+    const yamlArea = screen.getByRole("textbox", { name: "YAML session" }) as HTMLTextAreaElement;
     expect(yamlArea.value).toContain("comment: edited");
     expect(yamlArea.value).toContain("actual: NT");
+    closeExportDialog();
   });
 
   it("exports the current editable input as YAML without derived statistics", () => {
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "Step" }));
+    openSection("Statistics");
     fireEvent.click(screen.getByRole("button", { name: "Calculate" }));
     exportOption("Session as YAML");
 
-    const yamlArea = screen.getByLabelText("YAML session") as HTMLTextAreaElement;
+    const yamlArea = screen.getByRole("textbox", { name: "YAML session" }) as HTMLTextAreaElement;
     expect(yamlArea.value).toContain("version: 1");
     expect(yamlArea.value).toContain("cSource:");
     expect(yamlArea.value).toContain("riscVSource:");
     expect(yamlArea.value).toContain("branchSequence:");
     expect(yamlArea.value).not.toContain("statistics:");
     expect(yamlArea.value).not.toContain("tableView:");
+    closeExportDialog();
   });
 
   it("imports a YAML session and restores its editable sources", () => {
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "Import YAML" }));
-    expect(screen.getByRole("button", { name: "Import" })).toBeDisabled();
-    exportOption("Session as YAML");
-    const exportedYaml = (screen.getByLabelText("YAML session") as HTMLTextAreaElement).value;
+    expect(screen.getByRole("button", { name: /^Import$/ })).toBeDisabled();
+    act(() => {
+      useSimulationStore.getState().exportSessionYaml();
+    });
+    const exportedYaml = useSimulationStore.getState().exportedSessionYaml ?? "";
 
     act(() => {
       useSimulationStore.getState().updateCSource("int a = 10; int i = 0; for (; i < 3; i++) a += i;");
@@ -213,8 +234,8 @@ printf(a);`);
     fireEvent.change(screen.getByLabelText("Session YAML input"), {
       target: { value: exportedYaml }
     });
-    expect(screen.getByRole("button", { name: "Import" })).toBeEnabled();
-    fireEvent.click(screen.getByRole("button", { name: "Import" }));
+    expect(screen.getByRole("button", { name: /^Import$/ })).toBeEnabled();
+    fireEvent.click(screen.getByRole("button", { name: /^Import$/ }));
 
     fireEvent.click(screen.getByRole("tab", { name: "Didactic C" }));
     expect(screen.getByLabelText("Didactic C")).toHaveTextContent("#define N 10");
@@ -236,7 +257,7 @@ printf(a);`);
     expect(screen.getByText(/RISC-V was edited directly/)).toBeInTheDocument();
 
     exportOption("Session as YAML");
-    const yamlArea = screen.getByLabelText("YAML session") as HTMLTextAreaElement;
+    const yamlArea = screen.getByRole("textbox", { name: "YAML session" }) as HTMLTextAreaElement;
     expect(yamlArea.value).toContain("syncState: desynced");
     expect(yamlArea.value).not.toContain("cSource:");
   });
@@ -245,4 +266,15 @@ printf(a);`);
 function exportOption(name: string) {
   fireEvent.click(screen.getByRole("button", { name: "Export" }));
   fireEvent.click(screen.getByRole("menuitem", { name }));
+}
+
+function openSection(name: string) {
+  const button = screen.getByRole("button", { name });
+  if (button.getAttribute("aria-expanded") !== "true") {
+    fireEvent.click(button);
+  }
+}
+
+function closeExportDialog() {
+  fireEvent.click(screen.getByRole("button", { name: "Close" }));
 }

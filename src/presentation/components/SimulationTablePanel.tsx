@@ -1,4 +1,18 @@
-import { Box, Button, Divider, Menu, MenuItem, Paper, Stack, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  Menu,
+  MenuItem,
+  Paper,
+  Stack,
+  TextField,
+  Typography
+} from "@mui/material";
 import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
 import { useMemo, useState, type ReactNode } from "react";
 import type { DynamicTableView } from "../../application";
@@ -35,7 +49,11 @@ export function SimulationTablePanel({
   onExportSessionYaml
 }: SimulationTablePanelProps) {
   const [exportMenuAnchor, setExportMenuAnchor] = useState<null | HTMLElement>(null);
+  const [activeExport, setActiveExport] = useState<"table" | "yaml" | undefined>();
   const isExportMenuOpen = Boolean(exportMenuAnchor);
+  const exportedContent = activeExport === "yaml" ? exportedSessionYaml : exportedTable;
+  const exportedLabel = activeExport === "yaml" ? "YAML session" : "Table export";
+  const exportedTitle = activeExport === "yaml" ? "Session YAML" : "Table export";
   const columns = useMemo<ColumnDef<DynamicTableView["rows"][number]>[]>(
     () =>
       tableView.columns.map((column) => ({
@@ -122,6 +140,7 @@ export function SimulationTablePanel({
               disabled={currentStep === 0}
               onClick={() => {
                 setExportMenuAnchor(null);
+                setActiveExport("table");
                 onExportCsv();
               }}
             >
@@ -131,6 +150,7 @@ export function SimulationTablePanel({
               disabled={currentStep === 0}
               onClick={() => {
                 setExportMenuAnchor(null);
+                setActiveExport("table");
                 onExportMarkdown();
               }}
             >
@@ -139,6 +159,7 @@ export function SimulationTablePanel({
             <MenuItem
               onClick={() => {
                 setExportMenuAnchor(null);
+                setActiveExport("yaml");
                 onExportSessionYaml();
               }}
             >
@@ -210,30 +231,31 @@ export function SimulationTablePanel({
           </Box>
         </Box>
       </Paper>
-      {exportedTable ? (
-        <TextField
-          label="Table export"
-          multiline
-          minRows={4}
-          value={exportedTable}
-          InputProps={{
-            readOnly: true,
-            sx: { fontFamily: '"Roboto Mono", Consolas, monospace', fontSize: "0.8125rem" }
-          }}
-        />
-      ) : undefined}
-      {exportedSessionYaml ? (
-        <TextField
-          label="YAML session"
-          multiline
-          minRows={6}
-          value={exportedSessionYaml}
-          InputProps={{
-            readOnly: true,
-            sx: { fontFamily: '"Roboto Mono", Consolas, monospace', fontSize: "0.8125rem" }
-          }}
-        />
-      ) : undefined}
+      <Dialog
+        fullWidth
+        maxWidth="md"
+        open={activeExport !== undefined && exportedContent !== undefined}
+        transitionDuration={0}
+        onClose={() => setActiveExport(undefined)}
+      >
+        <DialogTitle>{exportedTitle}</DialogTitle>
+        <DialogContent>
+          <TextField
+            label={exportedLabel}
+            multiline
+            fullWidth
+            minRows={activeExport === "yaml" ? 12 : 8}
+            value={exportedContent ?? ""}
+            InputProps={{
+              readOnly: true,
+              sx: { fontFamily: '"Roboto Mono", Consolas, monospace', fontSize: "0.8125rem" }
+            }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setActiveExport(undefined)}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 }

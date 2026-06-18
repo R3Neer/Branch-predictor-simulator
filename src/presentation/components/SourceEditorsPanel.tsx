@@ -84,7 +84,6 @@ export function SourceEditorsPanel({
           <Typography component="h2" variant="h2">
             Source
           </Typography>
-          <Typography variant="body2">Choose one source view at a time.</Typography>
         </Box>
         <Chip
           size="small"

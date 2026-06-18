@@ -1,4 +1,4 @@
-import { Box, Button, Paper, Stack, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Stack, Typography } from "@mui/material";
 import type { CalculationView, SessionMode } from "../../application";
 import { CalculateIcon } from "./ActionIcons";
 
@@ -20,12 +20,16 @@ export function CalculationPanel({
   }
 
   return (
-    <Paper variant="outlined" sx={{ p: 2 }}>
-      <Stack spacing={1.5}>
-        <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+    <Accordion disableGutters elevation={0} sx={{ border: 1, borderColor: "divider", borderRadius: 1 }}>
+      <AccordionSummary aria-controls="calculations-panel" id="calculations-header">
+        <Stack direction="row" spacing={1} sx={{ alignItems: "center", width: "100%" }}>
           <Typography component="h2" variant="h2" sx={{ flexGrow: 1 }}>
             Calculations
           </Typography>
+        </Stack>
+      </AccordionSummary>
+      <AccordionDetails id="calculations-panel">
+        <Stack spacing={1.5}>
           <Button
             startIcon={<CalculateIcon />}
             variant="outlined"
@@ -34,28 +38,28 @@ export function CalculationPanel({
           >
             Show calculations
           </Button>
-        </Stack>
-        {calculationViews?.map((view, index) => (
-          <Box key={`${view.summary}-${index}`} sx={{ borderTop: 1, borderColor: "divider", pt: 1.5 }}>
-            <Typography variant="body2" sx={{ fontWeight: 700 }}>
-              Step {index + 1}: {view.summary}
-            </Typography>
-            {view.sections.map((section) => (
-              <Box key={`${index}-${section.title}`} sx={{ mt: 1 }}>
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                  {section.title}
-                </Typography>
-                {section.rows.map((row) => (
-                  <Typography key={`${row.label}-${row.operation}`} variant="body2" color="text.secondary">
-                    {formatCalculationRow(row)}
+          {calculationViews?.map((view, index) => (
+            <Box key={`${view.summary}-${index}`} sx={{ borderTop: 1, borderColor: "divider", pt: 1.5 }}>
+              <Typography variant="body2" sx={{ fontWeight: 700 }}>
+                Step {index + 1}: {view.summary}
+              </Typography>
+              {view.sections.map((section) => (
+                <Box key={`${index}-${section.title}`} sx={{ mt: 1 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                    {section.title}
                   </Typography>
-                ))}
-              </Box>
-            ))}
-          </Box>
-        ))}
-      </Stack>
-    </Paper>
+                  {section.rows.map((row) => (
+                    <Typography key={`${row.label}-${row.operation}`} variant="body2" color="text.secondary">
+                      {formatCalculationRow(row)}
+                    </Typography>
+                  ))}
+                </Box>
+              ))}
+            </Box>
+          ))}
+        </Stack>
+      </AccordionDetails>
+    </Accordion>
   );
 }
 

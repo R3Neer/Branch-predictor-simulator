@@ -1,4 +1,7 @@
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Alert,
   Box,
   Button,
@@ -11,6 +14,7 @@ import {
   TextField,
   Typography
 } from "@mui/material";
+import type { ReactNode } from "react";
 import type { CorrectionReport, StatisticKey, StatisticsSet } from "../../application";
 import { CheckIcon } from "./ActionIcons";
 import { visualTokens } from "../theme/tokens";
@@ -164,84 +168,121 @@ export function ConfigurationPanel({
           </Select>
         </FormControl>
         <TextField label="Active variant" size="small" value={activeVariantTitle} InputProps={{ readOnly: true }} />
-        <TextField
-          label="Predictor configuration JSON"
-          size="small"
-          multiline
-          minRows={8}
-          value={predictorConfigSource}
-          onChange={(event) => onPredictorConfigSourceChange(event.target.value)}
-          error={predictorConfigError !== undefined}
-          helperText={predictorConfigError ?? "Changes reset the current trace after the configuration is valid."}
-          InputProps={{
-            sx: { fontFamily: '"Roboto Mono", Consolas, monospace', fontSize: "0.8125rem" }
-          }}
-        />
-        <TextField
-          label="Statement"
-          size="small"
-          value={activeStatement}
-          multiline
-          minRows={3}
-          InputProps={{ readOnly: true }}
-        />
-        <Divider sx={{ borderColor: visualTokens.color.border }} />
-        <Typography component="h2" variant="h2">
-          Results
-        </Typography>
-        <TextField
-          label="Table answers"
-          size="small"
-          multiline
-          minRows={3}
-          value={tableAnswerSource}
-          onChange={(event) => onTableAnswerSourceChange(event.target.value)}
-          InputProps={{
-            sx: { fontFamily: '"Roboto Mono", Consolas, monospace', fontSize: "0.8125rem" }
-          }}
-        />
-        {statisticFields.map((field) => (
+        <CompactAccordion title="Predictor">
           <TextField
-            key={field.key}
-            label={field.answerLabel}
+            label="Predictor configuration JSON"
             size="small"
-            value={statAnswerInputs[field.key]}
-            onChange={(event) => onStatAnswerChange(field.key, event.target.value)}
+            multiline
+            minRows={8}
+            value={predictorConfigSource}
+            onChange={(event) => onPredictorConfigSourceChange(event.target.value)}
+            error={predictorConfigError !== undefined}
+            helperText={predictorConfigError ?? "Changes reset the current trace after the configuration is valid."}
+            InputProps={{
+              sx: { fontFamily: '"Roboto Mono", Consolas, monospace', fontSize: "0.8125rem" }
+            }}
           />
-        ))}
-        <Button
-          startIcon={<CheckIcon />}
-          variant="outlined"
-          onClick={onCheckAnswers}
-          disabled={traceCount === 0}
-        >
-          Check
-        </Button>
-        {tableAnswerError ? <Alert severity="warning">{tableAnswerError}</Alert> : undefined}
-        {correctionReport ? (
-          <Alert
-            severity={
-              correctionReport.summary.total > 0 && correctionReport.summary.correct === correctionReport.summary.total
-                ? "success"
-                : "info"
-            }
-          >
-            {correctionReport.summary.correct} / {correctionReport.summary.total} correct answers
-          </Alert>
-        ) : undefined}
-        {statisticFields.map((field) => (
           <TextField
-            key={field.resultLabel}
-            label={field.resultLabel}
+            label="Statement"
             size="small"
-            value={statistics ? field.format(statistics) : ""}
+            value={activeStatement}
+            multiline
+            minRows={3}
             InputProps={{ readOnly: true }}
           />
-        ))}
-        <Button variant="contained" onClick={onCalculateStats} disabled={traceCount === 0}>
-          Calculate
-        </Button>
+        </CompactAccordion>
+        <Divider sx={{ borderColor: visualTokens.color.border }} />
+        <CompactAccordion title="Answers">
+          <TextField
+            label="Table answers"
+            size="small"
+            multiline
+            minRows={3}
+            value={tableAnswerSource}
+            onChange={(event) => onTableAnswerSourceChange(event.target.value)}
+            InputProps={{
+              sx: { fontFamily: '"Roboto Mono", Consolas, monospace', fontSize: "0.8125rem" }
+            }}
+          />
+          {statisticFields.map((field) => (
+            <TextField
+              key={field.key}
+              label={field.answerLabel}
+              size="small"
+              value={statAnswerInputs[field.key]}
+              onChange={(event) => onStatAnswerChange(field.key, event.target.value)}
+            />
+          ))}
+          <Button
+            startIcon={<CheckIcon />}
+            variant="outlined"
+            onClick={onCheckAnswers}
+            disabled={traceCount === 0}
+          >
+            Check
+          </Button>
+          {tableAnswerError ? <Alert severity="warning">{tableAnswerError}</Alert> : undefined}
+          {correctionReport ? (
+            <Alert
+              severity={
+                correctionReport.summary.total > 0 && correctionReport.summary.correct === correctionReport.summary.total
+                  ? "success"
+                  : "info"
+              }
+            >
+              {correctionReport.summary.correct} / {correctionReport.summary.total} correct answers
+            </Alert>
+          ) : undefined}
+        </CompactAccordion>
+        <CompactAccordion title="Statistics">
+          {statisticFields.map((field) => (
+            <TextField
+              key={field.resultLabel}
+              label={field.resultLabel}
+              size="small"
+              value={statistics ? field.format(statistics) : ""}
+              InputProps={{ readOnly: true }}
+            />
+          ))}
+          <Button variant="contained" onClick={onCalculateStats} disabled={traceCount === 0}>
+            Calculate
+          </Button>
+        </CompactAccordion>
       </Stack>
     </Box>
+  );
+}
+
+function CompactAccordion({
+  title,
+  defaultExpanded = false,
+  children
+}: {
+  readonly title: string;
+  readonly defaultExpanded?: boolean;
+  readonly children: ReactNode;
+}) {
+  return (
+    <Accordion
+      defaultExpanded={defaultExpanded}
+      disableGutters
+      elevation={0}
+      sx={{
+        bgcolor: "transparent",
+        border: 1,
+        borderColor: "divider",
+        borderRadius: 1,
+        "&::before": { display: "none" }
+      }}
+    >
+      <AccordionSummary aria-controls={`${title.toLowerCase()}-panel`} id={`${title.toLowerCase()}-header`}>
+        <Typography component="h2" variant="h2">
+          {title}
+        </Typography>
+      </AccordionSummary>
+      <AccordionDetails id={`${title.toLowerCase()}-panel`} sx={{ px: 1, pt: 0 }}>
+        <Stack spacing={1.25}>{children}</Stack>
+      </AccordionDetails>
+    </Accordion>
   );
 }

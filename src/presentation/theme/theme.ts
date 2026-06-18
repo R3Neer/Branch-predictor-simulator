@@ -32,7 +32,7 @@ export const theme = createTheme({
     borderRadius: visualTokens.radius.control
   },
   typography: {
-    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Segoe UI", "Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
       fontSize: "1.25rem",
       fontWeight: 650,
