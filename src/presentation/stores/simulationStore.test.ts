@@ -33,6 +33,46 @@ describe("simulationStore", () => {
       counterBits: 2,
       countersPerEntry: 2
     });
+    expect(useSimulationStore.getState().predictorConfigSource).toContain('"type": "two-level"');
+  });
+
+  it("updates predictor configuration from validated JSON", () => {
+    const store = useSimulationStore.getState();
+
+    store.runAll();
+    useSimulationStore.getState().calculateStats();
+    expect(useSimulationStore.getState().currentStep).toBe(6);
+
+    useSimulationStore.getState().updatePredictorConfigSource(`{
+  "type": "one-level",
+  "counterBits": 1,
+  "entries": 1,
+  "initialCounterValue": 0,
+  "indexPolicy": {
+    "type": "manual",
+    "entries": 1
+  }
+}`);
+
+    expect(useSimulationStore.getState().predictorConfigError).toBeUndefined();
+    expect(useSimulationStore.getState().activePredictorConfig).toMatchObject({
+      type: "one-level",
+      counterBits: 1
+    });
+    expect(useSimulationStore.getState().currentStep).toBe(0);
+    expect(useSimulationStore.getState().statistics).toBeUndefined();
+  });
+
+  it("keeps the previous predictor configuration when JSON is invalid", () => {
+    const store = useSimulationStore.getState();
+    const previousConfig = store.activePredictorConfig;
+
+    store.updatePredictorConfigSource("{ nope");
+
+    expect(useSimulationStore.getState().predictorConfigError).toBe(
+      "Predictor configuration must be valid JSON."
+    );
+    expect(useSimulationStore.getState().activePredictorConfig).toBe(previousConfig);
   });
 
   it("preserves imported loop ranges when running a YAML session", () => {

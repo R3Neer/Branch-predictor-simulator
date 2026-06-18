@@ -39,12 +39,12 @@ Implemented:
 - Statistic and table answer checking.
 - Official templates for exercises 1, 2, 3, 4, 5, and 7 as versioned, engine-verified data.
 - Functional MUI/Zustand UI for templates, variants, editors, TanStack-powered table, statistics, checking, calculations, and import/export.
+- Validated JSON predictor configuration editor for custom v1 predictor settings.
 - Step forward, step backward, full run, and reset through the canonical trace.
 - Playwright e2e coverage for run, reveal, check, Markdown export, YAML export, manual sequence editing, YAML import, template/variant selection, exam leakage, and responsive smoke checks.
 
 Remaining v1 work:
 
-- Complete the visual predictor configurator and expected UI flows.
 - Finish visual QA, responsive review beyond smoke tests, basic accessibility, and release checklist execution.
 - Inspect npm audit findings as a tracked task and prefer targeted upgrades.
 

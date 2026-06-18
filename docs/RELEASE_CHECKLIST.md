@@ -21,6 +21,7 @@ Use this checklist before tagging or publishing a v1 build.
 - Open the local Vite URL.
 - Load an official template.
 - Select a non-default variant.
+- Edit the predictor configuration JSON and verify invalid JSON shows a validation error.
 - Run one step forward.
 - Run one step backward.
 - Run the full simulation.

@@ -137,8 +137,8 @@ The current production import graph has no detected cycles. The following areas 
 | Answer checking | `AnswerChecker` and parsers | Implemented |
 | YAML | `SessionYamlMapper` | Implemented |
 | Official templates | Template data and validator | Verified for v1 |
-| UI | MUI/Zustand screen | Functional, incomplete |
-| E2E QA | Playwright | Critical flows, exam leakage, and responsive smoke covered |
+| UI | MUI/Zustand screen | Functional with validated JSON predictor configuration |
+| E2E QA | Playwright | Critical flows, configuration editing, exam leakage, and responsive smoke covered |
 
 ## 10. Future Extension Points
 

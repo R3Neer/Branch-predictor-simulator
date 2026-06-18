@@ -128,3 +128,25 @@ test("keeps the main workflow reachable on desktop and mobile widths", async ({ 
     await expect(page.getByText("Step 6 / 6")).toBeVisible();
   }
 });
+
+test("edits the predictor configuration from validated JSON", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByLabel("Predictor configuration JSON").fill(`{
+  "type": "one-level",
+  "counterBits": 1,
+  "entries": 1,
+  "initialCounterValue": 0,
+  "indexPolicy": {
+    "type": "manual",
+    "entries": 1
+  }
+}`);
+  await page.getByRole("button", { name: "Run all" }).click();
+  await page.getByRole("button", { name: "Calculate" }).click();
+
+  await expect(page.getByRole("textbox", { name: "Memory bits", exact: true })).toHaveValue("1");
+
+  await page.getByLabel("Predictor configuration JSON").fill("{ nope");
+  await expect(page.getByText("Predictor configuration must be valid JSON.")).toBeVisible();
+});

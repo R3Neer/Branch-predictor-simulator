@@ -14,7 +14,12 @@ import {
   type TraceStep
 } from "../../application";
 import type { OfficialTemplate } from "../../infrastructure/templates/OfficialTemplate";
-import { createSimulationSessionService, getOfficialTemplates } from "../composition/simulationComposition";
+import {
+  createSimulationSessionService,
+  formatPredictorConfig,
+  getOfficialTemplates,
+  parsePredictorConfig
+} from "../composition/simulationComposition";
 
 interface SimulationStoreState {
   readonly templates: readonly OfficialTemplate[];
@@ -25,6 +30,8 @@ interface SimulationStoreState {
   readonly activeVariantTitle: string;
   readonly activeBranchSequence: BranchSequence;
   readonly activePredictorConfig: unknown;
+  readonly predictorConfigSource: string;
+  readonly predictorConfigError?: string;
   readonly language: Language;
   readonly mode: SessionMode;
   readonly cSource: string;
@@ -52,6 +59,7 @@ interface SimulationStoreState {
   readonly updateCSource: (source: string) => void;
   readonly updateRiscVSource: (source: string) => void;
   readonly updateManualSequenceSource: (source: string) => void;
+  readonly updatePredictorConfigSource: (source: string) => void;
   readonly updateSessionYamlInput: (source: string) => void;
   readonly updateStatAnswer: (key: StatisticKey, value: string) => void;
   readonly updateTableAnswerSource: (source: string) => void;
@@ -98,6 +106,7 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
   activeVariantTitle: initialVariant.title,
   activeBranchSequence: initialTemplate.branchSequence,
   activePredictorConfig: initialVariant.predictorConfig,
+  predictorConfigSource: formatPredictorConfig(initialVariant.predictorConfig),
   language: "en",
   mode: "exam",
   cSource: initialCSource,
@@ -123,6 +132,8 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       activeVariantTitle: variant.title,
       activeBranchSequence: template.branchSequence,
       activePredictorConfig: variant.predictorConfig,
+      predictorConfigSource: formatPredictorConfig(variant.predictorConfig),
+      predictorConfigError: undefined,
       language: "en",
       manualSequenceSource: sessionService.formatManualBranchSequence(template.branchSequence),
       manualSequenceError: undefined,
@@ -152,6 +163,8 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       selectedVariantId: variant.id,
       activeVariantTitle: variant.title,
       activePredictorConfig: variant.predictorConfig,
+      predictorConfigSource: formatPredictorConfig(variant.predictorConfig),
+      predictorConfigError: undefined,
       currentStep: 0,
       trace: [],
       statistics: undefined,
@@ -232,6 +245,31 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       });
     }
   },
+  updatePredictorConfigSource: (source) => {
+    try {
+      const predictorConfig = parsePredictorConfig(source);
+      set({
+        predictorConfigSource: source,
+        predictorConfigError: undefined,
+        activePredictorConfig: predictorConfig,
+        currentStep: 0,
+        trace: [],
+        statistics: undefined,
+        calculationViews: undefined,
+        correctionReport: undefined,
+        tableAnswerError: undefined,
+        exportedTable: undefined,
+        exportedSessionYaml: undefined,
+        tableView: sessionService.project([], get().mode)
+      });
+    } catch (error) {
+      set({
+        predictorConfigSource: source,
+        predictorConfigError:
+          error instanceof Error ? error.message : "Predictor configuration could not be parsed."
+      });
+    }
+  },
   updateSessionYamlInput: (source) => {
     set({ sessionYamlInput: source, sessionImportError: undefined });
   },
@@ -257,6 +295,8 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
         activeVariantTitle: "Imported configuration",
         activeBranchSequence: session.branchSequence,
         activePredictorConfig: session.predictorConfig,
+        predictorConfigSource: formatPredictorConfig(session.predictorConfig),
+        predictorConfigError: undefined,
         language: session.language,
         mode: session.mode,
         cSource: session.source.cSource ?? "",

@@ -85,6 +85,8 @@ export interface ConfigurationPanelProps {
   readonly activeStatement: string;
   readonly activeVariantTitle: string;
   readonly traceCount: number;
+  readonly predictorConfigSource: string;
+  readonly predictorConfigError?: string;
   readonly statAnswerInputs: Record<StatisticKey, string>;
   readonly tableAnswerSource: string;
   readonly tableAnswerError?: string;
@@ -92,6 +94,7 @@ export interface ConfigurationPanelProps {
   readonly statistics?: StatisticsSet;
   readonly onSelectTemplate: (value: string) => void;
   readonly onSelectVariant: (value: string) => void;
+  readonly onPredictorConfigSourceChange: (value: string) => void;
   readonly onTableAnswerSourceChange: (value: string) => void;
   readonly onStatAnswerChange: (key: StatisticKey, value: string) => void;
   readonly onCheckAnswers: () => void;
@@ -106,6 +109,8 @@ export function ConfigurationPanel({
   activeStatement,
   activeVariantTitle,
   traceCount,
+  predictorConfigSource,
+  predictorConfigError,
   statAnswerInputs,
   tableAnswerSource,
   tableAnswerError,
@@ -113,6 +118,7 @@ export function ConfigurationPanel({
   statistics,
   onSelectTemplate,
   onSelectVariant,
+  onPredictorConfigSourceChange,
   onTableAnswerSourceChange,
   onStatAnswerChange,
   onCheckAnswers,
@@ -157,6 +163,19 @@ export function ConfigurationPanel({
           </Select>
         </FormControl>
         <TextField label="Active variant" size="small" value={activeVariantTitle} InputProps={{ readOnly: true }} />
+        <TextField
+          label="Predictor configuration JSON"
+          size="small"
+          multiline
+          minRows={8}
+          value={predictorConfigSource}
+          onChange={(event) => onPredictorConfigSourceChange(event.target.value)}
+          error={predictorConfigError !== undefined}
+          helperText={predictorConfigError ?? "Changes reset the current trace after the configuration is valid."}
+          InputProps={{
+            sx: { fontFamily: '"Roboto Mono", Consolas, monospace', fontSize: "0.8125rem" }
+          }}
+        />
         <TextField
           label="Statement"
           size="small"

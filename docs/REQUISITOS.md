@@ -34,9 +34,11 @@ V1 includes:
 - YAML import/export.
 - CSV and Markdown table export.
 - English-only UI and project text.
+- Validated JSON predictor configuration editing.
 
 Out of scope for v1, but anticipated by the architecture:
 
+- Graphical per-predictor form builder.
 - Tournament predictor.
 - TAGE.
 - Detailed pipeline simulation.
@@ -233,11 +235,11 @@ Implemented:
 - Statistic and table answer checking.
 - Official templates for exercises 1, 2, 3, 4, 5, and 7 are engine-verified against expected official statistics.
 - Functional local MUI/Zustand UI with a TanStack-powered simulation table.
+- Validated JSON predictor configuration editor connected to the same schema used by YAML import.
 - Playwright e2e coverage for critical run/reveal/check/export flows, manual sequence YAML round trip, template/variant selection, exam leakage guard, and responsive smoke checks.
 
 Incomplete:
 
-- Full visual predictor configurator.
 - Visual loop editing.
 - Fine-grained active RISC-V instruction highlighting.
 - Visual QA, responsive review beyond smoke tests, and basic accessibility pass.

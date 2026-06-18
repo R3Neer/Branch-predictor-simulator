@@ -61,6 +61,35 @@ printf(a);`);
     expect(screen.getByLabelText("Aliasing events")).toHaveValue("0");
   });
 
+  it("edits the active predictor configuration through validated JSON", () => {
+    render(<App />);
+
+    const configEditor = screen.getByLabelText("Predictor configuration JSON");
+    expect((configEditor as HTMLTextAreaElement).value).toContain('"type": "one-level"');
+
+    fireEvent.change(configEditor, {
+      target: {
+        value: `{
+  "type": "one-level",
+  "counterBits": 1,
+  "entries": 1,
+  "initialCounterValue": 0,
+  "indexPolicy": {
+    "type": "manual",
+    "entries": 1
+  }
+}`
+      }
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Run all" }));
+    fireEvent.click(screen.getByRole("button", { name: "Calculate" }));
+
+    expect(screen.getByLabelText("Memory bits")).toHaveValue("1");
+
+    fireEvent.change(configEditor, { target: { value: "{ nope" } });
+    expect(screen.getByText("Predictor configuration must be valid JSON.")).toBeInTheDocument();
+  });
+
   it("reveals prediction data in solution mode", () => {
     render(<App />);
 

@@ -14,6 +14,8 @@ export function DashboardShell() {
     activeTitle,
     activeStatement,
     activeVariantTitle,
+    predictorConfigSource,
+    predictorConfigError,
     mode,
     cSource,
     riscVSource,
@@ -39,6 +41,7 @@ export function DashboardShell() {
     updateCSource,
     updateRiscVSource,
     updateManualSequenceSource,
+    updatePredictorConfigSource,
     updateSessionYamlInput,
     updateStatAnswer,
     updateTableAnswerSource,
@@ -138,6 +141,8 @@ export function DashboardShell() {
           activeStatement={activeStatement}
           activeVariantTitle={activeVariantTitle}
           traceCount={currentStep}
+          predictorConfigSource={predictorConfigSource}
+          predictorConfigError={predictorConfigError}
           statAnswerInputs={statAnswerInputs}
           tableAnswerSource={tableAnswerSource}
           tableAnswerError={tableAnswerError}
@@ -145,6 +150,7 @@ export function DashboardShell() {
           statistics={statistics}
           onSelectTemplate={selectTemplate}
           onSelectVariant={selectVariant}
+          onPredictorConfigSourceChange={updatePredictorConfigSource}
           onTableAnswerSourceChange={updateTableAnswerSource}
           onStatAnswerChange={updateStatAnswer}
           onCheckAnswers={checkAnswers}
