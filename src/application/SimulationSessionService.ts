@@ -1,17 +1,15 @@
 import { AnswerChecker, type CorrectionReport, type StatisticKey } from "../domain/correction/AnswerChecker";
 import { TableAnswerParser } from "../domain/correction/TableAnswerParser";
-import { PredictorFactory } from "../domain/predictors/PredictorFactory";
 import type { BranchSequence } from "../domain/simulation/BranchSequence";
-import { SequenceExpander } from "../domain/simulation/SequenceExpander";
-import { SimulationEngine } from "../domain/simulation/SimulationEngine";
 import type { TraceStep } from "../domain/simulation/TraceStep";
-import { StatsCalculator, type StatisticsSet } from "../domain/stats/StatsCalculator";
+import type { StatisticsSet } from "../domain/stats/StatsCalculator";
 import { CTranslator, type CTranslationResult } from "../domain/source/CTranslator";
 import { ManualBranchSequenceParser } from "../domain/source/ManualBranchSequenceParser";
 import { RiscVBranchSequenceAdapter } from "../domain/source/RiscVBranchSequenceAdapter";
 import { RiscVParser } from "../domain/source/RiscVParser";
 import type { SourceBundle } from "../domain/source/SourceBundle";
 import { TableProjector, type DynamicTableView, type SessionMode } from "./projectors/TableProjector";
+import { TraceStatsRunner } from "./TraceStatsRunner";
 
 export type TableExportFormat = "csv" | "markdown";
 
@@ -41,35 +39,31 @@ export interface CBranchSequenceTranslationResult extends CTranslationResult {
 
 export interface SimulationSessionServiceDependencies {
   readonly tableProjector?: TableProjector;
-  readonly predictorFactory?: PredictorFactory;
-  readonly sequenceExpander?: SequenceExpander;
   readonly cTranslator?: CTranslator;
   readonly riscVParser?: RiscVParser;
   readonly branchSequenceAdapter?: RiscVBranchSequenceAdapter;
   readonly manualBranchSequenceParser?: ManualBranchSequenceParser;
   readonly tableAnswerParser?: TableAnswerParser;
   readonly answerChecker?: AnswerChecker;
+  readonly traceStatsRunner?: TraceStatsRunner;
   readonly tableExporters: Record<TableExportFormat, TableExporterPort>;
   readonly sessionYamlMapper: SessionYamlPort;
 }
 
 export class SimulationSessionService {
   private readonly tableProjector: TableProjector;
-  private readonly predictorFactory: PredictorFactory;
-  private readonly sequenceExpander: SequenceExpander;
   private readonly cTranslator: CTranslator;
   private readonly riscVParser: RiscVParser;
   private readonly branchSequenceAdapter: RiscVBranchSequenceAdapter;
   private readonly manualBranchSequenceParser: ManualBranchSequenceParser;
   private readonly tableAnswerParser: TableAnswerParser;
   private readonly answerChecker: AnswerChecker;
+  private readonly traceStatsRunner: TraceStatsRunner;
   private readonly tableExporters: Record<TableExportFormat, TableExporterPort>;
   private readonly sessionYamlMapper: SessionYamlPort;
 
   constructor(dependencies: SimulationSessionServiceDependencies) {
     this.tableProjector = dependencies.tableProjector ?? new TableProjector();
-    this.predictorFactory = dependencies.predictorFactory ?? new PredictorFactory();
-    this.sequenceExpander = dependencies.sequenceExpander ?? new SequenceExpander();
     this.cTranslator = dependencies.cTranslator ?? new CTranslator();
     this.riscVParser = dependencies.riscVParser ?? new RiscVParser();
     this.branchSequenceAdapter = dependencies.branchSequenceAdapter ?? new RiscVBranchSequenceAdapter();
@@ -77,6 +71,7 @@ export class SimulationSessionService {
       dependencies.manualBranchSequenceParser ?? new ManualBranchSequenceParser();
     this.tableAnswerParser = dependencies.tableAnswerParser ?? new TableAnswerParser();
     this.answerChecker = dependencies.answerChecker ?? new AnswerChecker();
+    this.traceStatsRunner = dependencies.traceStatsRunner ?? new TraceStatsRunner();
     this.tableExporters = dependencies.tableExporters;
     this.sessionYamlMapper = dependencies.sessionYamlMapper;
   }
@@ -122,21 +117,7 @@ export class SimulationSessionService {
   }
 
   runTrace(branchSequence: BranchSequence, predictorConfig: unknown, limit = this.expandedLength(branchSequence)) {
-    const predictor = this.predictorFactory.create(predictorConfig);
-    if (!predictor) {
-      return [];
-    }
-
-    const limitedSequence = {
-      executions: this.sequenceExpander.expand(branchSequence).slice(0, limit),
-      loops: []
-    };
-    const engine = new SimulationEngine();
-
-    return engine.runToCompletion(
-      engine.initialise(limitedSequence, predictor as never, predictorConfig as never),
-      predictor as never
-    ).trace;
+    return this.traceStatsRunner.run(branchSequence, predictorConfig, limit).trace;
   }
 
   project(trace: readonly TraceStep[], mode: SessionMode) {
@@ -148,19 +129,11 @@ export class SimulationSessionService {
   }
 
   expandedLength(branchSequence: BranchSequence) {
-    return this.sequenceExpander.expand(branchSequence).length;
+    return this.traceStatsRunner.expandedLength(branchSequence);
   }
 
   calculateStats(trace: readonly TraceStep[], predictorConfig: unknown): StatisticsSet {
-    const predictor = this.predictorFactory.create(predictorConfig);
-    const memoryUsage =
-      predictor && "memoryUsage" in predictor
-        ? (predictor.memoryUsage as (config: unknown) => { bits: number; entries: number })(
-            predictorConfig
-          )
-        : undefined;
-
-    return new StatsCalculator().calculate(trace, memoryUsage);
+    return this.traceStatsRunner.calculateFromTrace(trace, predictorConfig);
   }
 
   checkStatAnswers(

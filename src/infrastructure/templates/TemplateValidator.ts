@@ -1,6 +1,5 @@
 import { PredictorFactory } from "../../domain/predictors/PredictorFactory";
-import { SimulationEngine } from "../../domain/simulation/SimulationEngine";
-import { StatsCalculator } from "../../domain/stats/StatsCalculator";
+import { TraceStatsRunner } from "../../application/TraceStatsRunner";
 import type { OfficialTemplate, OfficialTemplateVariant } from "./OfficialTemplate";
 import { officialTemplateSchema } from "./OfficialTemplateSchema";
 
@@ -12,7 +11,10 @@ export interface TemplateValidationReport {
 }
 
 export class TemplateValidator {
-  constructor(private readonly predictorFactory = new PredictorFactory()) {}
+  constructor(
+    private readonly predictorFactory = new PredictorFactory(),
+    private readonly traceStatsRunner = new TraceStatsRunner()
+  ) {}
 
   validate(template: OfficialTemplate): TemplateValidationReport {
     const errors: string[] = [];
@@ -56,18 +58,8 @@ export class TemplateValidator {
       return { errors: [`${variant.id}: predictor config is not executable yet`], warnings: [] };
     }
 
-    const engine = new SimulationEngine();
-    const run = engine.runToCompletion(
-      engine.initialise(template.branchSequence, predictor as never, variant.predictorConfig as never),
-      predictor as never
-    );
-    const memoryUsage =
-      "memoryUsage" in predictor
-        ? (predictor.memoryUsage as (config: unknown) => { bits: number; entries: number })(
-            variant.predictorConfig
-          )
-        : undefined;
-    const stats = new StatsCalculator().calculate(run.trace, memoryUsage);
+    const result = this.traceStatsRunner.run(template.branchSequence, variant.predictorConfig);
+    const stats = result.statistics;
     const expected = variant.expectedStatistics;
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -81,8 +73,26 @@ export class TemplateValidator {
     if (expected.memoryBits !== undefined && expected.memoryBits !== stats.memoryBits) {
       this.addDiscrepancy(template, `${variant.id}: expected ${expected.memoryBits} memory bits, engine produced ${stats.memoryBits}`, errors, warnings);
     }
+    if (expected.hitRate !== undefined && !this.sameRatio(expected.hitRate, stats.hitRate.value)) {
+      this.addDiscrepancy(template, `${variant.id}: expected hit rate ${expected.hitRate}, engine produced ${stats.hitRate.value}`, errors, warnings);
+    }
+    if (expected.missRate !== undefined && !this.sameRatio(expected.missRate, stats.missRate.value)) {
+      this.addDiscrepancy(template, `${variant.id}: expected miss rate ${expected.missRate}, engine produced ${stats.missRate.value}`, errors, warnings);
+    }
+    if (variant.officialSolution.stableFromStep !== undefined) {
+      const stableTrace = result.trace.filter((step) => step.step >= variant.officialSolution.stableFromStep!);
+      if (stableTrace.length === 0) {
+        this.addDiscrepancy(template, `${variant.id}: stableFromStep ${variant.officialSolution.stableFromStep} is outside the trace`, errors, warnings);
+      } else if (stableTrace.some((step) => !step.hit)) {
+        this.addDiscrepancy(template, `${variant.id}: not all predictions hit from step ${variant.officialSolution.stableFromStep}`, errors, warnings);
+      }
+    }
 
     return { errors, warnings };
+  }
+
+  private sameRatio(expected: number, actual: number): boolean {
+    return Math.abs(expected - actual) < 1e-9;
   }
 
   private addDiscrepancy(

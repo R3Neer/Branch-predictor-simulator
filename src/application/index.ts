@@ -23,6 +23,8 @@ export type { CalculationView } from "./projectors/CalculationViewBuilder";
 export { TableProjector } from "./projectors/TableProjector";
 export type { DynamicTableView, Language, SessionMode } from "./projectors/TableProjector";
 export { SimulationSessionService } from "./SimulationSessionService";
+export { TraceStatsRunner } from "./TraceStatsRunner";
+export type { TraceStatsResult } from "./TraceStatsRunner";
 export type {
   CBranchSequenceTranslationResult,
   PersistableStudySession,
