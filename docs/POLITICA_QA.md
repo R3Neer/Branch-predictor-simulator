@@ -62,7 +62,7 @@ Pending for v1:
 
 Tracked separately:
 
-- Review npm audit findings and decide package upgrades or mitigations without using forced breaking updates blindly.
+- Review `docs/SECURITY_TASKS.md` and decide package upgrades or mitigations without using forced breaking updates blindly.
 
 ## 5. Minimum Coverage By Piece
 
