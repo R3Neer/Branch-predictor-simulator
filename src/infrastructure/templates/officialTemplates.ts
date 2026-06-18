@@ -186,7 +186,7 @@ export const officialTemplates: readonly OfficialTemplate[] = [
   {
     id: "exercise-5-gshare",
     exerciseNumber: 5,
-    verificationStatus: "draft",
+    verificationStatus: "verified",
     title: "Exercise 5: gshare",
     source: "ref_docs/Problems.pdf",
     pdfReference: "EC Problems - Predictors, exercise 5, pages 4-5",
@@ -219,14 +219,14 @@ export const officialTemplates: readonly OfficialTemplate[] = [
           initialGhrValue: 0,
           initialCounterValue: 0
         },
-        expectedStatistics: { hits: 5, misses: 11 }
+        expectedStatistics: { hits: 5, misses: 11, hitRate: 5 / 16, missRate: 11 / 16, usedEntries: 9 }
       }
     ]
   },
   {
     id: "exercise-7-pattern-ttn",
     exerciseNumber: 7,
-    verificationStatus: "draft",
+    verificationStatus: "verified",
     title: "Exercise 7: T-T-NT pattern with predictor (2,2)",
     source: "ref_docs/Problems.pdf",
     pdfReference: "EC Problems - Predictors, exercise 7, page 6",
@@ -257,7 +257,13 @@ export const officialTemplates: readonly OfficialTemplate[] = [
           initialCounterValue: 0,
           indexPolicy: { type: "manual", entries: 1 }
         },
-        expectedStatistics: { notes: "The official solution states stable hits from execution 8 onward." }
+        expectedStatistics: {
+          hits: 8,
+          misses: 5,
+          hitRate: 8 / 13,
+          missRate: 5 / 13,
+          notes: "The official solution states stable hits from execution 8 onward."
+        }
       }
     ]
   }

@@ -29,7 +29,12 @@ describe("officialTemplates", () => {
 
   it("captures official gshare exercise statistics", () => {
     const exercise5 = officialTemplates.find((template) => template.exerciseNumber === 5);
-    expect(exercise5?.variants[0].expectedStatistics).toMatchObject({ hits: 5, misses: 11 });
+    expect(exercise5?.verificationStatus).toBe("verified");
+    expect(exercise5?.variants[0].expectedStatistics).toMatchObject({
+      hits: 5,
+      misses: 11,
+      usedEntries: 9
+    });
   });
 
   it("treats verified template statistic mismatches as blocking errors", () => {
@@ -62,6 +67,24 @@ describe("officialTemplates", () => {
 
     expect(report.valid).toBe(false);
     expect(report.errors[0]).toContain("expected hit rate 0.99");
+  });
+
+  it("treats verified template used-entry mismatches as blocking errors", () => {
+    const verified = officialTemplates.find((template) => template.exerciseNumber === 5);
+    expect(verified).toBeDefined();
+
+    const report = new TemplateValidator().validate({
+      ...verified!,
+      variants: [
+        {
+          ...verified!.variants[0],
+          expectedStatistics: { ...verified!.variants[0].expectedStatistics, usedEntries: 99 }
+        }
+      ]
+    });
+
+    expect(report.valid).toBe(false);
+    expect(report.errors[0]).toContain("expected 99 used entries");
   });
 
   it("keeps non-certified template discrepancies as warnings", () => {
@@ -114,7 +137,7 @@ describe("officialTemplates", () => {
       ]
     });
 
-    expect(report.valid).toBe(true);
-    expect(report.warnings.some((warning) => warning.includes("not all predictions hit from step 1"))).toBe(true);
+    expect(report.valid).toBe(false);
+    expect(report.errors.some((error) => error.includes("not all predictions hit from step 1"))).toBe(true);
   });
 });

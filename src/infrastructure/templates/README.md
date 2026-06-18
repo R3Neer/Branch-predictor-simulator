@@ -4,8 +4,8 @@ This directory contains versioned templates derived from `ref_docs/Problems.pdf`
 
 Current status:
 
-- Exercise 1: verified against the canonical engine.
-- Exercises 2, 3, 4, 5, and 7: present as working data and marked as `draft`.
+- Exercises 1, 5, and 7: verified against the canonical engine.
+- Exercises 2, 3, and 4: present as working data and marked as `draft`.
 - Exercise 6: outside v1 because it requires Tournament.
 
 Each template must declare:

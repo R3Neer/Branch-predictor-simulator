@@ -35,12 +35,12 @@ Implemented:
 - Didactic C translator for loop/branch exercises; it is not a general C compiler.
 - Editable manual sequence text format with `B1..Bn`, `T/NT`, optional address/index, comments, and repeated ranges.
 - Statistic and table answer checking.
-- Official templates for exercises 1, 2, 3, 4, 5, and 7 as versioned data; exercise 1 is verified, the rest are drafts.
+- Official templates for exercises 1, 2, 3, 4, 5, and 7 as versioned data; exercises 1, 5, and 7 are verified, while 2, 3, and 4 remain drafts.
 - Functional MUI/Zustand UI for templates, variants, editors, table, statistics, checking, and import/export.
 
 Remaining v1 work:
 
-- Verify templates 2, 3, 4, 5, and 7 against the PDF.
+- Verify templates 2, 3, and 4 against the PDF and close their current model/data discrepancies.
 - Complete the visual predictor configurator and expected UI flows.
 - Replace text fields with Monaco where it improves the workflow.
 - Use TanStack Table in the main table if dynamic columns become complex enough.

@@ -73,6 +73,12 @@ export class TemplateValidator {
     if (expected.memoryBits !== undefined && expected.memoryBits !== stats.memoryBits) {
       this.addDiscrepancy(template, `${variant.id}: expected ${expected.memoryBits} memory bits, engine produced ${stats.memoryBits}`, errors, warnings);
     }
+    if (expected.usedEntries !== undefined && expected.usedEntries !== stats.usedEntries) {
+      this.addDiscrepancy(template, `${variant.id}: expected ${expected.usedEntries} used entries, engine produced ${stats.usedEntries}`, errors, warnings);
+    }
+    if (expected.aliasingEvents !== undefined && expected.aliasingEvents !== stats.aliasingEvents) {
+      this.addDiscrepancy(template, `${variant.id}: expected ${expected.aliasingEvents} aliasing events, engine produced ${stats.aliasingEvents}`, errors, warnings);
+    }
     if (expected.hitRate !== undefined && !this.sameRatio(expected.hitRate, stats.hitRate.value)) {
       this.addDiscrepancy(template, `${variant.id}: expected hit rate ${expected.hitRate}, engine produced ${stats.hitRate.value}`, errors, warnings);
     }

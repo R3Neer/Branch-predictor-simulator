@@ -47,6 +47,8 @@ export const officialTemplateSchema = z.object({
         hitRate: z.number().nonnegative().optional(),
         missRate: z.number().nonnegative().optional(),
         memoryBits: z.number().int().nonnegative().optional(),
+        usedEntries: z.number().int().nonnegative().optional(),
+        aliasingEvents: z.number().int().nonnegative().optional(),
         notes: z.string().optional()
       })
     })

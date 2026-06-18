@@ -8,6 +8,8 @@ export interface ExpectedTemplateStatistics {
   readonly hitRate?: number;
   readonly missRate?: number;
   readonly memoryBits?: number;
+  readonly usedEntries?: number;
+  readonly aliasingEvents?: number;
   readonly notes?: string;
 }
 
