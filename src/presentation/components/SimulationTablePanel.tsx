@@ -1,4 +1,5 @@
 import DownloadIcon from "@mui/icons-material/Download";
+import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
@@ -14,6 +15,7 @@ export interface SimulationTablePanelProps {
   readonly exportedTable?: string;
   readonly exportedSessionYaml?: string;
   readonly onStep: () => void;
+  readonly onStepBack: () => void;
   readonly onRunAll: () => void;
   readonly onReset: () => void;
   readonly onExportCsv: () => void;
@@ -28,6 +30,7 @@ export function SimulationTablePanel({
   exportedTable,
   exportedSessionYaml,
   onStep,
+  onStepBack,
   onRunAll,
   onReset,
   onExportCsv,
@@ -54,13 +57,21 @@ export function SimulationTablePanel({
     <>
       <Paper variant="outlined" sx={{ overflow: "hidden" }}>
         <Stack direction="row" spacing={1} sx={{ p: 1.5, alignItems: "center" }}>
-          <Button startIcon={<PlayArrowIcon />} variant="contained" onClick={onStep}>
+          <Button
+            startIcon={<KeyboardBackspaceIcon />}
+            variant="outlined"
+            onClick={onStepBack}
+            disabled={currentStep === 0}
+          >
+            Back
+          </Button>
+          <Button startIcon={<PlayArrowIcon />} variant="contained" onClick={onStep} disabled={currentStep >= totalSteps}>
             Step
           </Button>
-          <Button startIcon={<SkipNextIcon />} variant="outlined" onClick={onRunAll}>
+          <Button startIcon={<SkipNextIcon />} variant="outlined" onClick={onRunAll} disabled={currentStep >= totalSteps}>
             Run all
           </Button>
-          <Button startIcon={<RestartAltIcon />} variant="outlined" color="inherit" onClick={onReset}>
+          <Button startIcon={<RestartAltIcon />} variant="outlined" color="inherit" onClick={onReset} disabled={currentStep === 0}>
             Reset
           </Button>
           <Button startIcon={<DownloadIcon />} variant="outlined" onClick={onExportCsv}>

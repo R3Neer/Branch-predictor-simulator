@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import {
-  SimulationSessionService,
   type CTranslationDiagnostic,
   type BranchSequence,
   type CalculationView,
@@ -15,9 +14,7 @@ import {
   type TraceStep
 } from "../../application";
 import type { OfficialTemplate } from "../../infrastructure/templates/OfficialTemplate";
-import { officialTemplates } from "../../infrastructure/templates/officialTemplates";
-import { CsvTableExporter, MarkdownTableExporter } from "../../infrastructure/export/TableExporters";
-import { SessionYamlMapper } from "../../infrastructure/persistence/SessionYamlMapper";
+import { createSimulationSessionService, getOfficialTemplates } from "../composition/simulationComposition";
 
 interface SimulationStoreState {
   readonly templates: readonly OfficialTemplate[];
@@ -61,6 +58,7 @@ interface SimulationStoreState {
   readonly importSessionYaml: () => void;
   readonly setMode: (mode: SessionMode) => void;
   readonly step: () => void;
+  readonly stepBack: () => void;
   readonly runAll: () => void;
   readonly reset: () => void;
   readonly calculateStats: () => void;
@@ -70,13 +68,8 @@ interface SimulationStoreState {
   readonly exportSessionYaml: () => void;
 }
 
-const sessionService = new SimulationSessionService({
-  sessionYamlMapper: new SessionYamlMapper(),
-  tableExporters: {
-    csv: new CsvTableExporter(),
-    markdown: new MarkdownTableExporter()
-  }
-});
+const sessionService = createSimulationSessionService();
+const officialTemplates = getOfficialTemplates();
 const emptyStatAnswerInputs: Record<StatisticKey, string> = {
   hits: "",
   misses: "",
@@ -302,6 +295,24 @@ export const useSimulationStore = create<SimulationStoreState>((set, get) => ({
       state.activePredictorConfig,
       state.currentStep + 1
     );
+    set({
+      currentStep: trace.length,
+      trace,
+      statistics: undefined,
+      calculationViews: undefined,
+      correctionReport: undefined,
+      exportedTable: undefined,
+      exportedSessionYaml: undefined,
+      tableView: sessionService.project(trace, get().mode)
+    });
+  },
+  stepBack: () => {
+    const state = get();
+    const targetStep = Math.max(0, state.currentStep - 1);
+    const trace =
+      targetStep === 0
+        ? []
+        : sessionService.runTrace(state.activeBranchSequence, state.activePredictorConfig, targetStep);
     set({
       currentStep: trace.length,
       trace,

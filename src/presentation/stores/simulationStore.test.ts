@@ -92,6 +92,22 @@ branchSequence:
     });
   });
 
+  it("steps backward by recomputing the canonical trace prefix", () => {
+    const store = useSimulationStore.getState();
+
+    store.runAll();
+    useSimulationStore.getState().calculateStats();
+    expect(useSimulationStore.getState().currentStep).toBe(6);
+    expect(useSimulationStore.getState().statistics).toBeDefined();
+
+    useSimulationStore.getState().stepBack();
+
+    expect(useSimulationStore.getState().currentStep).toBe(5);
+    expect(useSimulationStore.getState().trace).toHaveLength(5);
+    expect(useSimulationStore.getState().statistics).toBeUndefined();
+    expect(useSimulationStore.getState().tableView.rows).toHaveLength(5);
+  });
+
   it("checks table answers against the canonical trace", () => {
     const store = useSimulationStore.getState();
 

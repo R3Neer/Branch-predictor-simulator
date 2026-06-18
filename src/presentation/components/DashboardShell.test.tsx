@@ -32,13 +32,19 @@ printf(a);`);
     render(<App />);
 
     expect(screen.getByText("No executed steps")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Back" })).toBeDisabled();
 
     fireEvent.click(screen.getByRole("button", { name: "Step" }));
     expect(screen.getByText("Step 1 / 6")).toBeInTheDocument();
     expect(screen.getByText("B1")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Back" })).toBeEnabled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Back" }));
+    expect(screen.getByText("Step 0 / 6")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Back" })).toBeDisabled();
 
     fireEvent.click(screen.getByRole("button", { name: "Calculate" }));
-    expect(screen.getByLabelText("Misses")).toHaveValue("1");
+    expect(screen.getByLabelText("Misses")).toHaveValue("0");
   });
 
   it("shows all canonical statistic outputs after calculation", () => {

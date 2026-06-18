@@ -45,6 +45,7 @@ export function DashboardShell() {
     importSessionYaml,
     setMode,
     step,
+    stepBack,
     runAll,
     reset,
     calculateStats,
@@ -108,6 +109,7 @@ export function DashboardShell() {
             exportedTable={exportedTable}
             exportedSessionYaml={exportedSessionYaml}
             onStep={step}
+            onStepBack={stepBack}
             onRunAll={runAll}
             onReset={reset}
             onExportCsv={() => exportTable("csv")}

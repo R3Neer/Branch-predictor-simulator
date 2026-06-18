@@ -5,7 +5,12 @@ test("runs, reveals, checks, and exports a simulation", async ({ page }) => {
 
   await expect(page.getByRole("heading", { name: "Branch Predictor Simulator" })).toBeVisible();
   await expect(page.getByText("No executed steps")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Back" })).toBeDisabled();
 
+  await page.getByRole("button", { name: "Run all" }).click();
+  await expect(page.getByText("Step 6 / 6")).toBeVisible();
+  await page.getByRole("button", { name: "Back" }).click();
+  await expect(page.getByText("Step 5 / 6")).toBeVisible();
   await page.getByRole("button", { name: "Run all" }).click();
   await expect(page.getByText("Step 6 / 6")).toBeVisible();
 
