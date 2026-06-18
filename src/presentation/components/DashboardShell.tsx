@@ -137,6 +137,7 @@ export function DashboardShell() {
           activeTitle={activeTitle}
           activeStatement={activeStatement}
           activeVariantTitle={activeVariantTitle}
+          traceCount={currentStep}
           statAnswerInputs={statAnswerInputs}
           tableAnswerSource={tableAnswerSource}
           tableAnswerError={tableAnswerError}

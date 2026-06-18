@@ -42,9 +42,10 @@ printf(a);`);
     fireEvent.click(screen.getByRole("button", { name: "Back" }));
     expect(screen.getByText("Step 0 / 6")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Back" })).toBeDisabled();
-
-    fireEvent.click(screen.getByRole("button", { name: "Calculate" }));
-    expect(screen.getByLabelText("Misses")).toHaveValue("0");
+    expect(screen.getByRole("button", { name: "Calculate" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Check" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "CSV" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Markdown" })).toBeDisabled();
   });
 
   it("shows all canonical statistic outputs after calculation", () => {
@@ -104,7 +105,7 @@ printf(a);`);
     fireEvent.click(screen.getByRole("button", { name: "Step" }));
     fireEvent.click(screen.getByRole("button", { name: "Markdown" }));
 
-    const exportArea = screen.getByLabelText("Export") as HTMLTextAreaElement;
+    const exportArea = screen.getByLabelText("Table export") as HTMLTextAreaElement;
     expect(exportArea.value).toContain("| Iteration | Branch |");
     expect(exportArea.value).toContain("| 1 | B1 |");
   });
@@ -168,6 +169,7 @@ printf(a);`);
   it("imports a YAML session and restores its editable sources", () => {
     render(<App />);
 
+    expect(screen.getByRole("button", { name: "Import" })).toBeDisabled();
     fireEvent.click(screen.getByRole("button", { name: "YAML" }));
     const exportedYaml = (screen.getByLabelText("YAML session") as HTMLTextAreaElement).value;
 
@@ -179,6 +181,7 @@ printf(a);`);
     fireEvent.change(screen.getByLabelText("Session YAML input"), {
       target: { value: exportedYaml }
     });
+    expect(screen.getByRole("button", { name: "Import" })).toBeEnabled();
     fireEvent.click(screen.getByRole("button", { name: "Import" }));
 
     const textboxes = screen.getAllByRole("textbox") as HTMLTextAreaElement[];

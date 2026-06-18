@@ -30,7 +30,7 @@ export function ImportSessionPanel({
           }}
         />
         {sessionImportError ? <Alert severity="warning">{sessionImportError}</Alert> : undefined}
-        <Button variant="outlined" onClick={onImport}>
+        <Button variant="outlined" onClick={onImport} disabled={sessionYamlInput.trim() === ""}>
           Import
         </Button>
       </Stack>

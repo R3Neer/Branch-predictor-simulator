@@ -32,7 +32,7 @@ test("runs, reveals, checks, and exports a simulation", async ({ page }) => {
   await expect(page.getByText("3 / 3 correct answers")).toBeVisible();
 
   await page.getByRole("button", { name: "Markdown" }).click();
-  await expect(page.getByLabel("Export")).toContainText("| Iteration | Branch |");
+  await expect(page.getByLabel("Table export")).toContainText("| Iteration | Branch |");
 
   await page.getByRole("button", { name: "YAML" }).click();
   const yaml = page.getByLabel("YAML session");

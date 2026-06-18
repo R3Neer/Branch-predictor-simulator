@@ -56,7 +56,12 @@ export function SimulationTablePanel({
   return (
     <>
       <Paper variant="outlined" sx={{ overflow: "hidden" }}>
-        <Stack direction="row" spacing={1} sx={{ p: 1.5, alignItems: "center" }}>
+        <Stack
+          direction="row"
+          spacing={1}
+          useFlexGap
+          sx={{ p: 1.5, alignItems: "center", flexWrap: "wrap" }}
+        >
           <Button
             startIcon={<KeyboardBackspaceIcon />}
             variant="outlined"
@@ -65,25 +70,51 @@ export function SimulationTablePanel({
           >
             Back
           </Button>
-          <Button startIcon={<PlayArrowIcon />} variant="contained" onClick={onStep} disabled={currentStep >= totalSteps}>
+          <Button
+            startIcon={<PlayArrowIcon />}
+            variant="contained"
+            onClick={onStep}
+            disabled={currentStep >= totalSteps}
+          >
             Step
           </Button>
-          <Button startIcon={<SkipNextIcon />} variant="outlined" onClick={onRunAll} disabled={currentStep >= totalSteps}>
+          <Button
+            startIcon={<SkipNextIcon />}
+            variant="outlined"
+            onClick={onRunAll}
+            disabled={currentStep >= totalSteps}
+          >
             Run all
           </Button>
-          <Button startIcon={<RestartAltIcon />} variant="outlined" color="inherit" onClick={onReset} disabled={currentStep === 0}>
+          <Button
+            startIcon={<RestartAltIcon />}
+            variant="outlined"
+            color="inherit"
+            onClick={onReset}
+            disabled={currentStep === 0}
+          >
             Reset
           </Button>
-          <Button startIcon={<DownloadIcon />} variant="outlined" onClick={onExportCsv}>
+          <Button
+            startIcon={<DownloadIcon />}
+            variant="outlined"
+            onClick={onExportCsv}
+            disabled={currentStep === 0}
+          >
             CSV
           </Button>
-          <Button startIcon={<DownloadIcon />} variant="outlined" onClick={onExportMarkdown}>
+          <Button
+            startIcon={<DownloadIcon />}
+            variant="outlined"
+            onClick={onExportMarkdown}
+            disabled={currentStep === 0}
+          >
             Markdown
           </Button>
           <Button startIcon={<DownloadIcon />} variant="outlined" onClick={onExportSessionYaml}>
             YAML
           </Button>
-          <Typography sx={{ ml: "auto" }} variant="body2">
+          <Typography sx={{ ml: { sm: "auto" } }} variant="body2">
             Step {currentStep} / {totalSteps}
           </Typography>
         </Stack>
@@ -138,7 +169,7 @@ export function SimulationTablePanel({
       </Paper>
       {exportedTable ? (
         <TextField
-          label="Export"
+          label="Table export"
           multiline
           minRows={4}
           value={exportedTable}

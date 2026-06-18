@@ -84,6 +84,7 @@ export interface ConfigurationPanelProps {
   readonly activeTitle: string;
   readonly activeStatement: string;
   readonly activeVariantTitle: string;
+  readonly traceCount: number;
   readonly statAnswerInputs: Record<StatisticKey, string>;
   readonly tableAnswerSource: string;
   readonly tableAnswerError?: string;
@@ -104,6 +105,7 @@ export function ConfigurationPanel({
   activeTitle,
   activeStatement,
   activeVariantTitle,
+  traceCount,
   statAnswerInputs,
   tableAnswerSource,
   tableAnswerError,
@@ -187,7 +189,12 @@ export function ConfigurationPanel({
             onChange={(event) => onStatAnswerChange(field.key, event.target.value)}
           />
         ))}
-        <Button startIcon={<FactCheckIcon />} variant="outlined" onClick={onCheckAnswers}>
+        <Button
+          startIcon={<FactCheckIcon />}
+          variant="outlined"
+          onClick={onCheckAnswers}
+          disabled={traceCount === 0}
+        >
           Check
         </Button>
         {tableAnswerError ? <Alert severity="warning">{tableAnswerError}</Alert> : undefined}
@@ -211,7 +218,7 @@ export function ConfigurationPanel({
             InputProps={{ readOnly: true }}
           />
         ))}
-        <Button variant="contained" onClick={onCalculateStats}>
+        <Button variant="contained" onClick={onCalculateStats} disabled={traceCount === 0}>
           Calculate
         </Button>
       </Stack>
