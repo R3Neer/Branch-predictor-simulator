@@ -77,9 +77,22 @@ These are accepted for the current stage:
 - The application layer is concentrated in `SimulationSessionService` instead of many small use cases. If it grows further, extract use-case classes around translation, simulation, checking, and persistence.
 - The UI currently uses MUI `TextField` editors and a basic HTML table. Monaco and TanStack Table are installed and should be introduced when they reduce UI complexity.
 - Exam/solution mode exists in state and projections, but all visual leakage paths still need hardening.
-- Only template 1 is verified. Draft templates are clearly marked with `verificationStatus`.
+- The Zustand store still acts as the UI composition root and imports concrete infrastructure adapters directly. This is acceptable for the current local web app, but wiring should move into an application composition module if more screens or persistence adapters appear.
 
-## 7. Main Flows
+## 7. Architecture Watchlist
+
+The current production import graph has no detected cycles. The following areas need strict review as the v1 surface grows:
+
+| Area | Risk | Guardrail |
+| --- | --- | --- |
+| `src/presentation/stores/simulationStore.ts` | Broad store responsibilities and direct infrastructure wiring | Keep prediction rules out of the store; move adapter construction to a composition root before adding another screen |
+| `src/presentation/components/DashboardShell.tsx` | Large component mixing layout, editors, table, import, and checking UI | Split into panels and keep components free of domain calculations |
+| `src/application/SimulationSessionService.ts` | Facade could collect too many use cases | Extract dedicated use-case classes if translation, checking, or persistence logic grows |
+| `src/domain/source/CTranslator.ts` | Parser, analyzer, and emitter are close together | Split only when C support expands beyond the didactic branch-focused subset |
+| `src/infrastructure/predictors/PredictorConfigSchema.ts` | Large schema module | Keep as the validation boundary, but avoid adding predictor behavior here |
+| `src/infrastructure/templates/officialTemplates.ts` | Large verified data file | Split by exercise if richer expected tables or metadata make reviews harder |
+
+## 8. Main Flows
 
 ### Simulation
 
@@ -105,7 +118,7 @@ These are accepted for the current stage:
 3. Derived data such as trace, table view, and statistics is excluded.
 4. YAML is emitted for the user.
 
-## 8. Current Coverage Matrix
+## 9. Current Coverage Matrix
 
 | Requirement Area | Architectural Coverage | Implementation Status |
 | --- | --- | --- |
@@ -123,11 +136,11 @@ These are accepted for the current stage:
 | Table projection | `TableProjector` | Implemented |
 | Answer checking | `AnswerChecker` and parsers | Implemented |
 | YAML | `SessionYamlMapper` | Implemented |
-| Official templates | Template data and validator | Partially verified |
+| Official templates | Template data and validator | Verified for v1 |
 | UI | MUI/Zustand screen | Functional, incomplete |
 | E2E QA | Playwright | Pending |
 
-## 9. Future Extension Points
+## 10. Future Extension Points
 
 - Tournament and TAGE should add new predictor configs and implementations behind `BranchPredictor`.
 - Pipeline, ROB, return address stack, and penalties should be modeled as a future execution model rather than as changes inside each predictor.
