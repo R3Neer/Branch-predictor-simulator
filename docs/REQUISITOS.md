@@ -28,7 +28,7 @@ V1 includes:
 - Classic local correlated predictors.
 - Official templates for exercises 1, 2, 3, 4, 5, and 7.
 - Dynamic simulation table.
-- Step execution, full execution, reset, and loop expansion.
+- Step forward, step backward, full execution, reset, and loop expansion.
 - Manual table/answer checking.
 - Statistics calculated on demand.
 - YAML import/export.
@@ -217,27 +217,28 @@ Required separation:
 
 ## 13. Current Implementation Status
 
-Synchronization date: 2026-06-14.
+Synchronization date: 2026-06-18.
 
 Implemented:
 
 - One-level, two-level `(n,m)`, global correlated, `gshare`, `gselect`, and local correlated predictors.
-- Canonical simulation engine, loop expansion, partial/full execution, and trace-derived statistics.
+- Canonical simulation engine, loop expansion, step forward/backward, partial/full execution, and trace-derived statistics.
 - LSB, manual, XOR, and concatenation indexing.
 - Initial RISC-V parser.
 - Didactic C translator for supported loop/branch exercises.
 - Editable manual branch sequence text format.
 - YAML with Zod validation and derived-data exclusion.
+- Rich trace-derived table projection for predictor-specific history, index calculation, counter, and aliasing details.
 - CSV/Markdown export.
 - Statistic and table answer checking.
 - Official templates for exercises 1, 2, 3, 4, 5, and 7 are engine-verified against expected official statistics.
-- Functional local MUI/Zustand UI.
+- Functional local MUI/Zustand UI with a TanStack-powered simulation table.
+- Playwright e2e coverage for critical run/reveal/check/export flows, manual sequence YAML round trip, template/variant selection, exam leakage guard, and responsive smoke checks.
 
 Incomplete:
 
 - Full visual predictor configurator.
 - Visual loop editing.
 - Fine-grained active RISC-V instruction highlighting.
-- Explicit UI action for stepping backward.
-- Playwright e2e, visual QA, responsive QA, and basic accessibility pass.
-- Richer official table projections for templates 2, 3, and 4.
+- Visual QA, responsive review beyond smoke tests, and basic accessibility pass.
+- npm audit review and targeted dependency upgrades where appropriate.

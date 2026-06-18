@@ -76,7 +76,7 @@ These are accepted for the current stage:
 
 - The application layer is concentrated in `SimulationSessionService` instead of many small use cases. If it grows further, extract use-case classes around translation, simulation, checking, and persistence.
 - The UI currently uses MUI `TextField` editors and a TanStack-powered simulation table. Monaco is installed and should be introduced only when it reduces editor complexity.
-- Exam/solution mode exists in state and projections, but all visual leakage paths still need hardening.
+- Exam/solution mode exists in state and projections, with e2e coverage for enriched table leakage. Keep reviewing new UI surfaces for accidental solution exposure.
 - The presentation layer owns a small composition module that wires concrete infrastructure adapters into the application service. The Zustand store consumes that composition instead of instantiating adapters directly.
 
 ## 7. Architecture Watchlist
@@ -133,12 +133,12 @@ The current production import graph has no detected cycles. The following areas 
 | Manual sequence | `ManualBranchSequenceParser` | Implemented |
 | Simulation trace | `SimulationEngine`, `TraceStep` | Implemented |
 | Statistics | `StatsCalculator` | Implemented |
-| Table projection | `TableProjector` | Implemented |
+| Table projection | `TableProjector` | Implemented with predictor-specific trace details |
 | Answer checking | `AnswerChecker` and parsers | Implemented |
 | YAML | `SessionYamlMapper` | Implemented |
 | Official templates | Template data and validator | Verified for v1 |
 | UI | MUI/Zustand screen | Functional, incomplete |
-| E2E QA | Playwright | Initial critical flow covered |
+| E2E QA | Playwright | Critical flows, exam leakage, and responsive smoke covered |
 
 ## 10. Future Extension Points
 

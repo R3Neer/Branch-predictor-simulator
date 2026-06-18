@@ -27,7 +27,7 @@ This document defines how the simulator is tested and what must be true before a
 | Application integration | Vitest | Service/use-case collaboration with real domain and fake ports |
 | Infrastructure integration | Vitest | YAML, Zod schemas, exporters, templates |
 | UI components | Testing Library | Rendering, actions, visibility, and error states |
-| E2E | Playwright | Load template, simulate, check answers, import/export |
+| E2E | Playwright | Load template, simulate, check answers, import/export, exam leakage, responsive smoke |
 | Static checks | TypeScript, ESLint, Prettier | Types, layer hygiene, formatting |
 
 Required local commands before closing code changes:
@@ -49,16 +49,15 @@ Covered today:
 - Simulation engine, sequence expansion, and statistics.
 - C/RISC-V translators/parsers and manual sequence parser.
 - Statistic and table answer checking.
-- Table/calculation projectors.
+- Table/calculation projectors, including richer predictor-specific columns.
 - YAML, Zod schemas, and official template validation.
 - CSV/Markdown exporters.
-- Zustand store and `DashboardShell`.
-- Playwright e2e flows covering run, solution reveal, calculation reveal, answer checking, Markdown export, YAML export, manual sequence editing, YAML import, and template/variant selection.
+- Zustand store and `DashboardShell`, including step backward behavior.
+- Playwright e2e flows covering run, solution reveal, calculation reveal, answer checking, Markdown export, YAML export, manual sequence editing, YAML import, template/variant selection, exam leakage for enriched table details, and desktop/mobile responsive smoke checks.
 
 Pending for v1:
 
-- Broader Playwright coverage for responsive smoke checks.
-- Visual, responsive, and basic accessibility review.
+- Visual, responsive review beyond smoke tests, and basic accessibility review.
 - Tests around final English-only copy if localization infrastructure is expanded.
 
 Tracked separately:

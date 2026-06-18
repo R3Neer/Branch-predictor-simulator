@@ -89,3 +89,42 @@ test("loads an official template variant and recalculates canonical statistics",
   await expect(page.getByRole("textbox", { name: "Hit rate", exact: true })).toHaveValue("20.00%");
   await expect(page.getByRole("textbox", { name: "Miss rate", exact: true })).toHaveValue("80.00%");
 });
+
+test("keeps enriched predictor details hidden in exam mode", async ({ page }) => {
+  await page.goto("/");
+
+  await page.getByRole("combobox", { name: "Template" }).click();
+  await page.getByRole("option", { name: "Exercise 2: two-level (1,1) and (1,2)" }).click();
+  await page.getByRole("button", { name: "Run all" }).click();
+
+  await expect(page.getByRole("columnheader", { name: "History before" })).toBeVisible();
+  await expect(page.getByRole("columnheader", { name: "Index calculation" })).toBeVisible();
+
+  const firstRow = page.getByRole("row").nth(1);
+  await expect(firstRow.getByRole("cell").nth(2)).toHaveText("");
+  await expect(firstRow.getByRole("cell").nth(4)).toHaveText("");
+  await expect(firstRow.getByRole("cell").nth(6)).toHaveText("");
+
+  await page.getByRole("tab", { name: "Solution" }).click();
+  await expect(firstRow.getByRole("cell").nth(2)).not.toHaveText("");
+  await expect(firstRow.getByRole("cell").nth(4)).not.toHaveText("");
+  await expect(firstRow.getByRole("cell").nth(6)).not.toHaveText("");
+});
+
+test("keeps the main workflow reachable on desktop and mobile widths", async ({ page }) => {
+  for (const viewport of [
+    { width: 1280, height: 900 },
+    { width: 390, height: 844 }
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+
+    await expect(page.getByRole("heading", { name: "Branch Predictor Simulator" })).toBeVisible();
+    await expect(page.getByLabel("Didactic C")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Run all" })).toBeVisible();
+
+    await page.getByRole("button", { name: "Run all" }).click();
+    await expect(page.getByRole("table", { name: "Simulation table" })).toBeVisible();
+    await expect(page.getByText("Step 6 / 6")).toBeVisible();
+  }
+});

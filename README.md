@@ -11,6 +11,7 @@ The living project documentation is:
 - `docs/REQUISITOS.md`: v1 functional scope and requirements.
 - `docs/ARQUITECTURA.md`: domain model, layers, contracts, and design patterns.
 - `docs/POLITICA_QA.md`: test policy, quality gates, and QA responsibilities.
+- `docs/RELEASE_CHECKLIST.md`: local v1 release checklist.
 - `docs/DECISIONES_TECNICAS_Y_AGENTES.md`: technical decisions, tools, and Codex agents.
 - `.codex/AGENTES.md`: operational cheat sheet for subagents.
 - `ref_docs/Problems.pdf`: official branch predictor exercises.
@@ -20,7 +21,7 @@ The living project documentation is:
 
 ## Current Status
 
-Estimated v1 progress: 50-55%.
+Estimated v1 progress: 70-75%.
 
 Implemented:
 
@@ -30,23 +31,21 @@ Implemented:
 - Main v1 predictors: one-level, two-level `(n,m)`, global correlated, `gshare`, `gselect`, and local correlated.
 - LSB, manual, XOR, and concatenation indexers.
 - Trace-derived statistics: hits, misses, rates, memory, used entries, and aliasing.
-- Table projection, compact calculations, CSV/Markdown table export, and YAML session export/import.
+- Rich trace-derived table projection, compact calculations, CSV/Markdown table export, and YAML session export/import.
 - Initial RISC-V parser for conditional branches, labels, addresses, and comments.
 - Didactic C translator for loop/branch exercises; it is not a general C compiler.
 - Editable manual sequence text format with `B1..Bn`, `T/NT`, optional address/index, comments, and repeated ranges.
 - Statistic and table answer checking.
 - Official templates for exercises 1, 2, 3, 4, 5, and 7 as versioned, engine-verified data.
 - Functional MUI/Zustand UI for templates, variants, editors, TanStack-powered table, statistics, checking, calculations, and import/export.
-- Playwright e2e coverage for run, reveal, check, Markdown export, YAML export, manual sequence editing, YAML import, and template/variant selection.
+- Step forward, step backward, full run, and reset through the canonical trace.
+- Playwright e2e coverage for run, reveal, check, Markdown export, YAML export, manual sequence editing, YAML import, template/variant selection, exam leakage, and responsive smoke checks.
 
 Remaining v1 work:
 
-- Add richer official table projections for templates 2, 3, and 4.
 - Complete the visual predictor configurator and expected UI flows.
-- Replace text fields with Monaco where it improves the workflow.
-- Complete English-only user-facing copy and future i18n infrastructure only when explicitly requested.
-- Broaden Playwright coverage for responsive smoke checks.
-- Finish visual QA, responsive checks, basic accessibility, and release checklist.
+- Finish visual QA, responsive review beyond smoke tests, basic accessibility, and release checklist execution.
+- Inspect npm audit findings as a tracked task and prefer targeted upgrades.
 
 ## Stack
 
@@ -109,6 +108,7 @@ src/
 |   +-- templates/
 +-- presentation/
     +-- components/
+    +-- composition/
     +-- screens/
     +-- stores/
     +-- theme/
