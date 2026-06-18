@@ -3,6 +3,8 @@ import PlayArrowIcon from "@mui/icons-material/PlayArrow";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import SkipNextIcon from "@mui/icons-material/SkipNext";
 import { Box, Button, Divider, Paper, Stack, TextField, Typography } from "@mui/material";
+import { flexRender, getCoreRowModel, useReactTable, type ColumnDef } from "@tanstack/react-table";
+import { useMemo } from "react";
 import type { DynamicTableView } from "../../application";
 
 export interface SimulationTablePanelProps {
@@ -32,6 +34,22 @@ export function SimulationTablePanel({
   onExportMarkdown,
   onExportSessionYaml
 }: SimulationTablePanelProps) {
+  const columns = useMemo<ColumnDef<DynamicTableView["rows"][number]>[]>(
+    () =>
+      tableView.columns.map((column) => ({
+        id: column.id,
+        header: column.label,
+        cell: ({ row }) => row.original.cells[column.id]?.value ?? ""
+      })),
+    [tableView.columns]
+  );
+  const rows = useMemo(() => [...tableView.rows], [tableView.rows]);
+  const table = useReactTable({
+    data: rows,
+    columns,
+    getCoreRowModel: getCoreRowModel()
+  });
+
   return (
     <>
       <Paper variant="outlined" sx={{ overflow: "hidden" }}>
@@ -77,22 +95,28 @@ export function SimulationTablePanel({
             }}
           >
             <thead>
-              <tr>
-                {tableView.columns.map((column) => (
-                  <th key={column.id}>{column.label}</th>
-                ))}
-              </tr>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <th key={header.id}>
+                      {header.isPlaceholder
+                        ? undefined
+                        : flexRender(header.column.columnDef.header, header.getContext())}
+                    </th>
+                  ))}
+                </tr>
+              ))}
             </thead>
             <tbody>
-              {tableView.rows.length === 0 ? (
+              {table.getRowModel().rows.length === 0 ? (
                 <tr>
                   <td colSpan={tableView.columns.length}>No executed steps</td>
                 </tr>
               ) : (
-                tableView.rows.map((row) => (
+                table.getRowModel().rows.map((row) => (
                   <tr key={row.id}>
-                    {tableView.columns.map((column) => (
-                      <td key={column.id}>{row.cells[column.id]?.value}</td>
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
                     ))}
                   </tr>
                 ))
