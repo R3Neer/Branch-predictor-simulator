@@ -12,6 +12,7 @@ The living project documentation is:
 - `docs/ARQUITECTURA.md`: domain model, layers, contracts, and design patterns.
 - `docs/POLITICA_QA.md`: test policy, quality gates, and QA responsibilities.
 - `docs/RELEASE_CHECKLIST.md`: local v1 release checklist.
+- `docs/RELEASE_CHECKLIST_RUNS.md`: completed release checklist evidence.
 - `docs/SECURITY_TASKS.md`: dependency audit findings and upgrade tasks.
 - `docs/DECISIONES_TECNICAS_Y_AGENTES.md`: technical decisions, tools, and Codex agents.
 - `.codex/AGENTES.md`: operational cheat sheet for subagents.
