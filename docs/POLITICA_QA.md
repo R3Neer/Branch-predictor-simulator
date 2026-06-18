@@ -54,15 +54,18 @@ Covered today:
 - CSV/Markdown exporters.
 - Zustand store and `DashboardShell`, including step backward behavior.
 - Playwright e2e flows covering run, solution reveal, calculation reveal, answer checking, Markdown export, YAML export, manual sequence editing, YAML import, template/variant selection, predictor configuration editing, exam leakage for enriched table details, and desktop/mobile responsive smoke checks.
+- Manual visual/responsive/accessibility release pass covering desktop, tablet, mobile, table scrolling, keyboard navigation, and focus visibility.
+- Dependency audit review with 0 current vulnerabilities.
+- GitHub Actions CI workflow and release-time GitHub Pages workflow.
 
-Pending for v1:
+Pending release validation:
 
-- Visual, responsive review beyond smoke tests, and basic accessibility review.
-- Tests around final English-only copy if localization infrastructure is expanded.
+- Repository Pages source must be set to GitHub Actions before the first hosted deployment.
+- The first published GitHub Release must be checked to confirm that the release workflow deploys successfully.
 
 Tracked separately:
 
-- Review `docs/SECURITY_TASKS.md` and decide package upgrades or mitigations without using forced breaking updates blindly.
+- Continue recording future dependency findings in `docs/SECURITY_TASKS.md` without using forced breaking updates blindly.
 
 ## 5. Minimum Coverage By Piece
 

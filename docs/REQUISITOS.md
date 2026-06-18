@@ -73,7 +73,7 @@ The application has three input paths:
 - RISC-V source.
 - Manual branch sequence.
 
-The C translator is intentionally didactic. It should cover loops, conditional branches, simple integer arithmetic, loads/stores when needed by exercises, and basic floating-point examples if they are required later. It is not a full C compiler and does not need stack management, ABI support, complex calls, or a runtime.
+The C translator is intentionally didactic and branch-focused. The current v1 subset covers supported loop/branch exercises and simple integer updates needed to generate branch-oriented RISC-V examples. It is not a full C compiler and does not include stack management, ABI support, complex calls, floating-point lowering, a runtime, or general load/store compilation.
 
 The simulation source of truth is the branch execution sequence. RISC-V is used to detect branches and provide addresses/labels; actual outcomes `T/NT` come from the manual sequence or official templates.
 
@@ -184,7 +184,7 @@ Export formats:
 - CSV table.
 - Markdown table.
 
-Image export is deferred unless it becomes cheap after v1.
+Image export is out of v1 and may be added as a later exporter.
 
 ## 11. UI
 
@@ -221,6 +221,8 @@ Required separation:
 
 Synchronization date: 2026-06-18.
 
+Status: v1 local release candidate. The local release checklist has passed. Hosted GitHub Pages publication still requires repository Pages source configuration and a published GitHub Release run.
+
 Implemented:
 
 - One-level, two-level `(n,m)`, global correlated, `gshare`, `gselect`, and local correlated predictors.
@@ -237,10 +239,14 @@ Implemented:
 - Functional local MUI/Zustand UI with a TanStack-powered simulation table.
 - Validated JSON predictor configuration editor connected to the same schema used by YAML import.
 - Playwright e2e coverage for critical run/reveal/check/export flows, manual sequence YAML round trip, template/variant selection, exam leakage guard, and responsive smoke checks.
+- Manual visual/responsive/accessibility review, including mobile table scrolling and keyboard focus checks.
+- GitHub Actions CI and release-time GitHub Pages deployment workflow.
+- Dependency audit review with 0 current vulnerabilities.
 
-Incomplete:
+Deferred beyond v1:
 
 - Visual loop editing.
 - Fine-grained active RISC-V instruction highlighting.
-- Visual QA, responsive review beyond smoke tests, and basic accessibility pass.
-- npm audit review and targeted dependency upgrades where appropriate.
+- General-purpose C compiler behavior beyond the didactic branch-focused subset.
+- Image export.
+- Tournament, TAGE, pipeline, ROB, return address stack, and timing penalties.
