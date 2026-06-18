@@ -1,6 +1,18 @@
 import { createTheme } from "@mui/material/styles";
 
 export const theme = createTheme({
+  components: {
+    MuiButtonBase: {
+      styleOverrides: {
+        root: {
+          "&.Mui-focusVisible": {
+            outline: "3px solid #0b8594",
+            outlineOffset: 2
+          }
+        }
+      }
+    }
+  },
   palette: {
     mode: "light",
     primary: {

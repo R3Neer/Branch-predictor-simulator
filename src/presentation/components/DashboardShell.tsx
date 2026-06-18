@@ -60,7 +60,16 @@ export function DashboardShell() {
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
       <AppBar position="static" color="inherit" elevation={0}>
-        <Toolbar sx={{ gap: 2, borderBottom: 1, borderColor: "divider" }}>
+        <Toolbar
+          sx={{
+            alignItems: { xs: "stretch", sm: "center" },
+            borderBottom: 1,
+            borderColor: "divider",
+            flexDirection: { xs: "column", sm: "row" },
+            gap: { xs: 0.5, sm: 2 },
+            py: { xs: 0.75, sm: 0 }
+          }}
+        >
           <Typography component="h1" variant="h1" sx={{ flexGrow: 1 }}>
             Branch Predictor Simulator
           </Typography>
@@ -68,6 +77,17 @@ export function DashboardShell() {
             value={mode}
             aria-label="Work mode"
             onChange={(_event, value: "exam" | "solution") => setMode(value)}
+            sx={{
+              minHeight: 48,
+              width: { xs: "100%", sm: "auto" },
+              "& .MuiTab-root": {
+                flex: { xs: 1, sm: "0 0 auto" },
+                minWidth: { xs: 0, sm: 90 }
+              },
+              "& .MuiTabs-flexContainer": {
+                width: "100%"
+              }
+            }}
           >
             <Tab value="exam" label="Exam" />
             <Tab value="solution" label="Solution" />

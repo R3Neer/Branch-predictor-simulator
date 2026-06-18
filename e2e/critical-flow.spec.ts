@@ -122,6 +122,8 @@ test("keeps the main workflow reachable on desktop and mobile widths", async ({ 
     await expect(page.getByRole("heading", { name: "Branch Predictor Simulator" })).toBeVisible();
     await expect(page.getByLabel("Didactic C")).toBeVisible();
     await expect(page.getByRole("button", { name: "Run all" })).toBeVisible();
+    await expect(page.getByRole("tab", { name: "Exam" })).toBeInViewport();
+    await expect(page.getByRole("tab", { name: "Solution" })).toBeInViewport();
 
     await page.getByRole("button", { name: "Run all" }).click();
     await expect(page.getByRole("table", { name: "Simulation table" })).toBeVisible();
